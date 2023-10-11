@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_sit_operation_application/src/controllers/station-service.dart';
 import 'package:flutter_sit_operation_application/src/domain/config-file.dart';
+import 'package:flutter_sit_operation_application/src/home_page/config-view.dart';
 
 class StationDeviceScreen extends StatefulWidget {
   final Function onReadValues;
@@ -26,6 +29,10 @@ class _StationDeviceScreenState extends State<StationDeviceScreen> {
   }
 
   void loadConfig() async {
+    print('Trying to load config file');
+    setState(() {
+      _config = null;
+    });
     List<BluetoothService> services = await widget.device.discoverServices();
     BluetoothService stationService = services.firstWhere((service) {
       return service.uuid == Guid(StationService.stationServiceId);
@@ -39,23 +46,56 @@ class _StationDeviceScreenState extends State<StationDeviceScreen> {
     print('**** Lendo Configureção inicial ${configCharacteristic.uuid}\n');
     var sub = configCharacteristic.value.listen((value) {
       print("Novo Valor lido aqui dentro: ${value}");
+
+      if (value.isEmpty) return;
+
+      String configJson = String.fromCharCodes(value);
+
+      Map configMap = json.decode(configJson);
+      print("Baixado ${configMap}");
+      // return json.encode(data);
+
+      ConfigData incommingConfig = ConfigData(
+          configMap['STATION_UID'] ?? "",
+          configMap['STATION_NAME'] ?? "",
+          configMap['WIFI_SSID'] ?? "",
+          configMap['WIFI_PASSWORD'] ?? "",
+          configMap['MQTT_SERVER'] ?? "",
+          configMap['MQTT_USERNAME'] ?? "",
+          configMap['MQTT_PASSWORD'] ?? "",
+          configMap['MQTT_TOPIC'] ?? "",
+          configMap['MQTT_PORT'].toString(),
+          configMap['INTERVAL'].toString());
+
+      print("converted config: ${incommingConfig}");
+
       setState(() {
-        _config = ConfigData(
-            "est001",
-            String.fromCharCodes(value),
-            "ssif wifi",
-            "Senha wifi",
-            "localhost",
-            "macae/etc",
-            "123",
-            "meu-topico",
-            "1884",
-            '60');
+        _config = incommingConfig;
       });
     });
 
     await configCharacteristic.read();
     // sub.cancel();
+  }
+
+  Future<bool> submitConfig(ConfigData newConfig) async {
+    print('Trying to submit new config : ${newConfig}');
+
+    List<BluetoothService> services = await widget.device.discoverServices();
+    BluetoothService stationService = services.firstWhere((service) {
+      return service.uuid == Guid(StationService.stationServiceId);
+    });
+
+    BluetoothCharacteristic configCharacteristic =
+        stationService.characteristics.firstWhere((characteristic) {
+      return characteristic.uuid == Guid(StationService.configCharacteristicId);
+    });
+
+    print('**** Enviando nova Configureção ${configCharacteristic.uuid}\n');
+
+    List<int> result = _config == null ? [] : newConfig!.toBuffer();
+    configCharacteristic.write(result);
+    return true;
   }
 
   Widget _buildReadWriteNotifyButton(
@@ -93,7 +133,11 @@ class _StationDeviceScreenState extends State<StationDeviceScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: ElevatedButton(
               child: Text('WRITE', style: TextStyle(color: Colors.white)),
-              onPressed: () {},
+              onPressed: () {
+                // charac.write(value)
+                List<int> result = _config == null ? [] : _config!.toBuffer();
+                charac.write(result);
+              },
             ),
           ),
         ),
@@ -207,36 +251,29 @@ class _StationDeviceScreenState extends State<StationDeviceScreen> {
                             icon: Icon(Icons.refresh),
                             onPressed: () => widget.device.discoverServices(),
                           ),
-                          const IconButton(
-                            icon: SizedBox(
+                          IconButton(
+                            onPressed: () {
+                              loadConfig();
+                            },
+                            icon: const SizedBox(
                               child: CircularProgressIndicator(
                                 valueColor: AlwaysStoppedAnimation(Colors.grey),
                               ),
                               width: 18.0,
                               height: 18.0,
                             ),
-                            onPressed: null,
                           )
                         ],
                       ),
                     ),
                   ),
-                  _config == null
-                      ? const Text('Carregando...')
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Nome: ${_config?.name}"),
-                            Text("Uid: ${_config?.uid}"),
-                            Text("Wifi ssid: ${_config?.wifiSsid}"),
-                            Text("Wifi password: ${_config?.wifiPassword}"),
-                            Text("Mqqt server: ${_config?.mqqtServer}"),
-                            Text("Mqqt port: ${_config?.mqqtPort}"),
-                            Text("Mqqt topic: ${_config?.mqqtTopic}"),
-                            Text("Mqqt username: ${_config?.mqqtUsername}"),
-                            Text("Nqqt password: ${_config?.mqqtPassword}"),
-                          ],
-                        )
+                  if (_config == null)
+                    const Text('Carregando...')
+                  else
+                    ConfigView(
+                      config: (_config as ConfigData),
+                      onSubmit: submitConfig,
+                    ),
                 ],
               ),
             ),

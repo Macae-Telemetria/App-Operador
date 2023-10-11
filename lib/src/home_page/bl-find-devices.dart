@@ -23,7 +23,14 @@ class FindDevicesScreen extends StatelessWidget {
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 16))),
             StreamBuilder<List<BluetoothDevice>>(
                 stream: Stream.periodic(const Duration(seconds: 2))
-                    .asyncMap((_) => controller.getConnectedDevices()),
+                    .asyncMap((_) async {
+                  List<BluetoothDevice> result =
+                      await controller.getConnectedDevices();
+                  /*    if (result.isNotEmpty) {
+                    print("não esta vazia não");
+                  } */
+                  return result;
+                }),
                 initialData: [],
                 builder: (c, snapshot) {
                   print("New snapshot: ${snapshot}");
@@ -93,7 +100,7 @@ class FindDevicesScreen extends StatelessWidget {
                               Container(
                                   padding: const EdgeInsets.all(16.0),
                                   child: const Text(
-                                      "Novos Dispositivos Encontrados: ",
+                                      "Dispositivos Encontrados: ",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16))),
@@ -112,7 +119,20 @@ class FindDevicesScreen extends StatelessWidget {
                               trailing: ElevatedButton(
                                 child: const Text('Conectar'),
                                 onPressed: () {
-                                  controller.connectDevice(r.device);
+                                  controller.connectDevice(r.device).then(
+                                      (value) => Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  StationDeviceScreen(
+                                                      device: r.device,
+                                                      onReadValues: (serviceId,
+                                                          characteristicId,
+                                                          payload) {
+                                                        controller.readValue(
+                                                            serviceId,
+                                                            characteristicId,
+                                                            payload);
+                                                      }))));
                                 },
                               ),
                               title: Text("${r.device.name}",
