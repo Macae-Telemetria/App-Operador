@@ -1,16 +1,16 @@
 import 'dart:convert';
 
 class ConfigData {
-  String uid; //  "STATION_UID": "02",
-  String name; //  "STATION_NAME": "est002",
-  String wifiSsid; //  "WIFI_SSID": "Lucas",
-  String wifiPassword; //  "WIFI_PASSWORD": "2014072276",
-  String mqqtServer; //  "MQTT_SERVER": "telemetria.macae.ufrj.br",
-  String mqqtUsername; //  "MQTT_USERNAME": "telemetria",
-  String mqqtPassword; //  "MQTT_PASSWORD": "kancvx8thz9FCN5jyq",
-  String mqqtTopic; //  "MQTT_TOPIC": "/prefeituras/macae/estacoes/est001",
-  String mqqtPort; //  "MQTT_PORT": 1883,
-  String readInterval; //  "INTERVAL": 3000
+  String uid;
+  String name;
+  String wifiSsid;
+  String wifiPassword;
+  String mqqtServer;
+  String mqqtUsername;
+  String mqqtPassword;
+  String mqqtTopic;
+  String mqqtPort;
+  String readInterval;
 
   ConfigData(
       this.uid,
@@ -39,8 +39,8 @@ class ConfigData {
       'MQTT_USERNAME': mqqtUsername,
       'MQTT_PASSWORD': mqqtPassword,
       'MQTT_TOPIC': mqqtTopic,
-      'MQTT_PORT': mqqtPort,
-      'INTERVAL': readInterval
+      'MQTT_PORT': mqqtPort.isNotEmpty ? int.parse(mqqtPort) : 1883,
+      'INTERVAL': readInterval.isNotEmpty ? int.parse(readInterval) : 60000,
     };
 
     return json.encode(data);
