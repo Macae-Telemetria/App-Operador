@@ -63,28 +63,61 @@ class BluetoothController extends ChangeNotifier {
 
   // get connected devices
   Future<List<BluetoothDevice>> getConnectedDevices() {
-    print("tryin to get connected devices");
+    print("BluetoothController: tryin to get connected devices");
     return flutterBlue.connectedDevices;
   }
 
-  Future<void> connectDevice(BluetoothDevice device) async {
+  Future<void> connectDevice(context, BluetoothDevice device) async {
     try {
-      print(
-          "BluetoothController: trying to connect with device: ${device.name}");
+      print("BluetoothController: trying to connect with device");
+      print("BluetoothController: ${device.id}");
+
+      showDialog(
+          // The user CANNOT close this dialog  by pressing outsite it
+          barrierDismissible: false,
+          context: context,
+          builder: (_) {
+            return const Dialog(
+              // The background color
+              backgroundColor: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // The loading indicator
+                    CircularProgressIndicator(),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    // Some text
+                    Text('Conectando...')
+                  ],
+                ),
+              ),
+            );
+          });
+
       await device.connect(timeout: Duration(seconds: 2), autoConnect: true);
       print("BluetoothController: Connected sucessfully");
+      Navigator.of(context).pop();
+      return;
+      // close the dialog automatically
     } catch (err) {
       print("BluetoothController: Failed to connect with device");
       print(err);
+      Navigator.of(context).pop();
     }
   }
 
   Future<void> disconnectDevice(BluetoothDevice device) async {
-    print("tryin to disconnect with device");
+    print("BluetoothController: tryin to disconnect with device");
+    print("BluetoothController: ${device.id}");
     device.disconnect();
   }
 
   void readValue(serviceId, characteristicId, payload) {
+    print("BluetoothController: tryin  read new value");
     if (serviceId == Guid(StationService.stationServiceId)) {
       print("Novo valor Recebido: ${characteristicId}");
       StationService().loadConfig(String.fromCharCodes(payload));
