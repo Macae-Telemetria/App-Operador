@@ -34,7 +34,7 @@ class _BTHomePageState extends State<BTHomePage> {
           builder: (c, snapshot) {
             final state = snapshot.data;
             if (state == true) {
-              return FindDevicesScreen(controller: btController);
+              return FindDevicesScreen();
             }
             return const BluetoothOffScreen();
           }),

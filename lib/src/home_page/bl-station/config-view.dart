@@ -18,7 +18,6 @@ class ConfigView extends StatefulWidget {
 
 class _ConfigViewState extends State<ConfigView> {
   bool _isLoading = false;
-
   var idCtrl = TextEditingController();
   var nameCtrl = TextEditingController();
   var wifiCtrl = TextEditingController();
@@ -33,6 +32,8 @@ class _ConfigViewState extends State<ConfigView> {
   @override
   void initState() {
     super.initState();
+
+    print("ConfigView: >>>> Incomming config ${widget.config.toJson()}");
     idCtrl = TextEditingController(text: widget.config.uid);
     nameCtrl = TextEditingController(text: widget.config.name);
     wifiCtrl = TextEditingController(text: widget.config.wifiSsid);
@@ -85,7 +86,7 @@ class _ConfigViewState extends State<ConfigView> {
         intervalText);
 
     var succeded = await widget.onSubmit(newConfig);
-    print('resultado aqui ${succeded}');
+    print('ConfigView: resultado aqui ${succeded}');
 
     setState(() {
       _isLoading = false;
@@ -140,6 +141,11 @@ class _ConfigViewState extends State<ConfigView> {
           AppTextField(
               label: "Mqqt topico",
               controller: mqqtTopicCtrl,
+              initialValue: ""),
+          const SizedBox(height: 8),
+          AppTextField(
+              label: "Intervalo de medições",
+              controller: intervalCtrl,
               initialValue: ""),
           const SizedBox(height: 8),
           ElevatedButton(

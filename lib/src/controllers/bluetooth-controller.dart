@@ -98,7 +98,7 @@ class BluetoothController extends ChangeNotifier {
             );
           });
 
-      await device.connect(timeout: Duration(seconds: 2), autoConnect: true);
+      await device.connect(timeout: Duration(seconds: 8), autoConnect: true);
       print("BluetoothController: Connected sucessfully");
       Navigator.of(context).pop();
       return;

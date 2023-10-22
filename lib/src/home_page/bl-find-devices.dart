@@ -1,173 +1,124 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_sit_operation_application/src/controllers/bluetooth-controller.dart';
-import 'package:flutter_sit_operation_application/src/home_page/bl-station-device.dart';
+import 'package:flutter_sit_operation_application/src/widgets/device-tile.dart';
+import 'package:flutter_sit_operation_application/src/widgets/floating-search-button.dart';
+
+import 'bl-station/bl-station-view.dart';
 
 class FindDevicesScreen extends StatelessWidget {
-  final BluetoothController controller;
+  final BluetoothController controller = BluetoothController();
 
-  const FindDevicesScreen({Key? key, required this.controller})
+  FindDevicesScreen({Key? key}) // required this.controller})
       : super(key: key);
+
+  void moveToDevice(context, device) {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => StationDeviceScreen(device: device)));
+    /* onReadValues: (serviceId, characteristicId, payload) {
+              controller.readValue(serviceId, characteristicId, payload);
+            })) */
+  }
+
+  List<Widget> _renderScanResult(context, List<ScanResult> scanResult) {
+    if (scanResult.isEmpty) return [];
+
+    onPress(BluetoothDevice device) async {
+      try {
+        await controller.connectDevice(context, device);
+        print("Conectado com sucesso");
+        moveToDevice(context, device);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Conectado com sucesso!"),
+        ));
+      } catch (error) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Não foi possivel estabelecer Conexão."),
+        ));
+      }
+    }
+
+    var devices = (scanResult).map((s) => s.device);
+    return devices
+        .map((device) => DeviceTile(
+            name: device.name,
+            subtitle: device.id.toString(),
+            isconnected: false,
+            onTap: () => onPress(device)))
+        .toList();
+  }
+
+  List<Widget> _renderConnectedDevices(context, List<BluetoothDevice> devices) {
+    if (devices.isEmpty) return [];
+
+    onPress(BluetoothDevice device) async {
+      try {
+        print('Iniciando dispositivo');
+        moveToDevice(context, device);
+      } catch (error) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Não foi encontrar Dispositivo."),
+        ));
+      }
+    }
+
+    return devices
+        .map((device) => DeviceTile(
+            name: device.name,
+            subtitle: device.id.toString(),
+            isconnected: true,
+            onTap: () => onPress(device)))
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-                padding: const EdgeInsets.all(16.0),
-                child: const Text("Dispositivos Conectados: ",
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16))),
-            StreamBuilder<List<BluetoothDevice>>(
-                stream: Stream.periodic(const Duration(seconds: 2))
-                    .asyncMap((_) async {
-                  List<BluetoothDevice> result =
-                      await controller.getConnectedDevices();
-                  /*    if (result.isNotEmpty) {
-                    print("não esta vazia não");
-                  } */
-                  return result;
-                }),
-                initialData: [],
-                builder: (c, snapshot) {
-                  print("New snapshot: ${snapshot}");
-                  return Column(
-                    children: snapshot.data!
-                        .map((d) => ListTile(
-                              title: Text(d.name,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16)),
-                              subtitle: Text(d.id.toString()),
-                              leading: IconButton(
-                                icon: const Icon(Icons.bluetooth_connected),
-                                onPressed: () {},
-                              ),
-                              trailing: StreamBuilder<BluetoothDeviceState>(
-                                stream: d.state,
-                                initialData: BluetoothDeviceState.disconnected,
-                                builder: (c, snapshot) {
-                                  print("Data snapshot: ${snapshot.data}");
-                                  if (snapshot.data ==
-                                      BluetoothDeviceState.connected) {
-                                    return IconButton(
-                                      icon: const Icon(Icons.edit_note),
-                                      onPressed: () {
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    StationDeviceScreen(
-                                                        device: d,
-                                                        onReadValues: (serviceId,
-                                                            characteristicId,
-                                                            payload) {
-                                                          controller.readValue(
-                                                              serviceId,
-                                                              characteristicId,
-                                                              payload);
-                                                        })));
-                                      },
-                                    );
-                                  }
-                                  return const Text("Desconectado");
-                                },
-                              ),
-                            ))
-                        .toList(),
-                  );
-                }),
-            StreamBuilder<List<ScanResult>>(
-              stream: controller.getScanResults(), // .instance.scanResults,
+        body: SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          StreamBuilder<List<BluetoothDevice>>(
               initialData: [],
+              stream: Stream.periodic(const Duration(seconds: 1))
+                  .asyncMap((_) => controller.getConnectedDevices()),
               builder: (c, snapshot) {
-                var scanResult = snapshot.data!;
+                List<BluetoothDevice> devices = snapshot.data!;
 
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    scanResult.isNotEmpty
-                        ? Column(
+                if (devices.isEmpty) {
+                  return Column(children: [
+                    StreamBuilder<List<ScanResult>>(
+                      stream:
+                          controller.getScanResults(), // .instance.scanResults,
+                      initialData: [],
+                      builder: (c, snapshot) {
+                        return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                height: 1,
-                                width: double.infinity,
-                                color: Colors.grey.shade300,
-                              ),
-                              Container(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: const Text(
-                                      "Dispositivos Encontrados: ",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16))),
-                            ],
-                          )
-                        : Text(""),
-                    Column(
-                      children: (snapshot.data)!
-                          .map(
-                            (r) => ListTile(
-                              leading: IconButton(
-                                icon: const Icon(
-                                    Icons.bluetooth_disabled_outlined),
-                                onPressed: () {},
-                              ),
-                              trailing: ElevatedButton(
-                                child: const Text('Conectar'),
-                                onPressed: () {
-                                  controller.connectDevice(r.device).then(
-                                      (value) => Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  StationDeviceScreen(
-                                                      device: r.device,
-                                                      onReadValues: (serviceId,
-                                                          characteristicId,
-                                                          payload) {
-                                                        controller.readValue(
-                                                            serviceId,
-                                                            characteristicId,
-                                                            payload);
-                                                      }))));
-                                },
-                              ),
-                              title: Text("${r.device.name}",
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14)),
-                              subtitle: Text(r.device.id.toString()),
-                            ),
-                          )
-                          .toList(),
+                            children:
+                                _renderScanResult(context, snapshot.data!));
+                      },
                     ),
-                  ],
-                );
-              },
-            ),
-          ],
-        ),
+                    const SizedBox(height: 32),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: StreamBuilder<bool>(
+                        stream: controller.isScanning(),
+                        initialData: false,
+                        builder: (c, snapshot) {
+                          return FloatingSearchButton(
+                              isRunning: snapshot.data!,
+                              onStart: controller.startScanning,
+                              onStop: controller.stopScanning);
+                        },
+                      ),
+                    )
+                  ]);
+                }
+                return Column(
+                    children: _renderConnectedDevices(context, devices));
+              }),
+        ],
       ),
-      floatingActionButton: StreamBuilder<bool>(
-        stream: controller.isScanning(),
-        initialData: false,
-        builder: (c, snapshot) {
-          if (snapshot.data!) {
-            return FloatingActionButton(
-              child: Icon(Icons.stop),
-              onPressed: () => controller.stopScanning(),
-              backgroundColor: Colors.red,
-            );
-          } else {
-            return FloatingActionButton(
-                child: const Icon(Icons.search),
-                onPressed: () => controller.startScanning());
-          }
-        },
-      ),
-    );
+    ));
   }
 }

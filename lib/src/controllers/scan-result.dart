@@ -8,6 +8,6 @@ class ScannedDevice {
 
   @override
   String toString() {
-    return "id: ${id ?? "Sem ide"}, name: $name";
+    return "id: ${id ?? "Sem id"}, name: $name";
   }
 }

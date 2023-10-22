@@ -16,6 +16,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_blue: ^0.8.0
+  flutter_blue_plus: ^1.20.4
 
 dev_dependencies:
   flutter_test:

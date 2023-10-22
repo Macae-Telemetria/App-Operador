@@ -1,4 +1,4 @@
-class StationService {
+class BluetoothServiceMap {
   static String stationServiceId = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
   static String stationServiceName = 'Serviços da Estação';
 
