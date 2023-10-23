@@ -152,7 +152,7 @@ class BluetoothController {
 
       // Very important!
       if (Platform.isAndroid) {
-        await device.requestMtu(512);
+        await device.requestMtu(1024);
       }
       // close the dialog automatically
       return true;

@@ -5,14 +5,21 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_sit_operation_application/src/domain/health-check.dart';
 
 class HealthCheckService {
+  late BluetoothCharacteristic characteristic;
   final StreamController<HealthCheck?> _controller =
       StreamController<HealthCheck?>();
 
   Stream<HealthCheck?> get healthCheckStream => _controller.stream;
 
-  Future<bool> startFetching(
-      BluetoothDevice device, BluetoothCharacteristic characteristic) async {
+  void setCharacteristic(c) {
+    characteristic = c;
+  }
+
+  Future<bool> startFetching(BluetoothDevice device) async {
     print("HealthCheckService:startFetching Inciando notifcation");
+
+    if (characteristic == null) return false;
+
     loadData(device, characteristic).listen((configData) {
       _controller.sink.add(configData);
       // _controller.close(); // Close the stream after adding the data once
@@ -68,7 +75,12 @@ class HealthCheckService {
     return controller.stream;
   }
 
-  void stopFetching() {
+  Future<void> stopNotifying() async {
+    await characteristic.setNotifyValue(false, timeout: 8);
+  }
+
+  Future<void> stopFetching() async {
+    print("Parando caractetistica");
     _controller.close();
   }
 }
