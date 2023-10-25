@@ -101,6 +101,29 @@ class ConfigService {
     return null;
   }
 
+  Future<ConfigData?> writeConfigData(ConfigData configData) async {
+    print("ConfigService: start to write config data.");
+
+    BluetoothCharacteristic? characteristic = findCharacteristic();
+    if (characteristic == null) {
+      print("HealthCheckService: Unable to find config characteristic");
+      return null;
+    }
+
+    try {
+      // devo converter sirng to int
+      print("ConfigService: Writing data");
+
+      List<int> value = configData.toBuffer();
+      await characteristic.write(value);
+    } catch (err) {
+      print("ConfigService: Failed to write data");
+      print("ConfigService: Error -> ${err}");
+    }
+
+    return null;
+  }
+
   void dispose() {
     _controller
         .close(); // Make sure to close the stream when it's no longer needed

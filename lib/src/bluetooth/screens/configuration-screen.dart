@@ -29,6 +29,11 @@ class _ConfigurationScreenState extends State<ConfigurationScreen> {
     super.dispose();
   }
 
+  Future<bool> _handleSubmit(config) async {
+    await widget.configService.writeConfigData(config);
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -40,11 +45,7 @@ class _ConfigurationScreenState extends State<ConfigurationScreen> {
           if (snapshot.data == null) {
             return const Text("Carregando...");
           }
-          return ConfigView(
-              config: (snapshot.data!),
-              onSubmit: (config) async {
-                return true;
-              });
+          return ConfigView(config: (snapshot.data!), onSubmit: _handleSubmit);
         });
   }
 }
