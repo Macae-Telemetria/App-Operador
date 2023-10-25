@@ -90,7 +90,14 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
                 initialData: false,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator(); // Show a loading indicator while discovering services
+                    return Center(
+                      child: Column(
+                        children: [
+                          Text('Carregando serviços...'),
+                          CircularProgressIndicator(),
+                        ],
+                      ),
+                    ); // Show a loading indicator while discovering services
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else if (snapshot.hasData) {

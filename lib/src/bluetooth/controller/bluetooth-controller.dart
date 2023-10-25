@@ -141,19 +141,25 @@ class BluetoothController {
 
   Future<bool> discoverServices(BluetoothDevice device) async {
     try {
+      print(
+          "BluetoothController: Carregando serviços do dispositivo bluetooth");
       await device.discoverServices(timeout: 15);
 
       final mtuSubscription = device.mtu.listen((int mtu) {
         print("mtu $mtu");
       });
 
+      int mtu = await device!.mtu.first;
+      await device!.requestMtu(247);
+
+      while (mtu != 247) {
+        print("BluetoothController: Waiting for requested MTU $mtu");
+        await Future.delayed(const Duration(seconds: 1));
+        mtu = await device!.mtu.first;
+      }
       // cleanup: cancel subscription when disconnected
       device.cancelWhenDisconnected(mtuSubscription);
-
-      // Very important!
-      if (Platform.isAndroid) {
-        await device.requestMtu(1024);
-      }
+      print("BluetoothController: FINAL MTU $mtu");
       // close the dialog automatically
       return true;
     } catch (err) {

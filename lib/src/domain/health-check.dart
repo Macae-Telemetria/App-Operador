@@ -7,6 +7,7 @@ class HealthCheck {
   bool isWifiConnected;
   bool isMqqtConnected;
   int wifiDbm;
+  int timeRemaining;
 
   HealthCheck(
     this.softwareVersion,
@@ -14,6 +15,7 @@ class HealthCheck {
     this.isWifiConnected,
     this.isMqqtConnected,
     this.wifiDbm,
+    this.timeRemaining,
   );
 
   @override

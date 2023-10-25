@@ -6,11 +6,11 @@ import 'package:flutter_sit_operation_application/src/domain/health-check.dart';
 import 'package:flutter_sit_operation_application/src/home_page/bl-station/healthcheck.view.dart';
 
 class ReportsScreen extends StatefulWidget {
-  final HealthCheckService healthCheckService;
   final BluetoothDevice device;
+  final HealthCheckService healthCheckService;
 
-  const ReportsScreen(
-      {super.key, required this.healthCheckService, required this.device});
+  ReportsScreen({super.key, required this.device})
+      : healthCheckService = HealthCheckService(device: device);
 
   @override
   State<ReportsScreen> createState() => _ReportsScreenState();
@@ -19,7 +19,7 @@ class ReportsScreen extends StatefulWidget {
 class _ReportsScreenState extends State<ReportsScreen> {
   @override
   void initState() {
-    print("ReportsScreen: iNICIADO");
+    print("ReportsScreen: Iniciado");
     super.initState();
   }
 
@@ -34,11 +34,11 @@ class _ReportsScreenState extends State<ReportsScreen> {
   Widget build(BuildContext context) {
     return Container(
         child: FutureBuilder(
-            future: widget.healthCheckService.startFetching(widget.device),
+            future: widget.healthCheckService.startFetching(),
             initialData: false,
             builder: (BuildContext context, snapshot) {
               if (snapshot.data == false)
-                return Text("Carregando caracteristica");
+                return const Text("Carregando caracteristica");
               return StreamBuilder<HealthCheck?>(
                   stream: widget.healthCheckService.healthCheckStream,
                   initialData: null,
@@ -46,7 +46,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     print("DeviceScreen: snapshot");
                     print("DeviceScreen: ${subSnapshot.data}");
                     if (subSnapshot.data == null) {
-                      return const Text("Aguardando...");
+                      return const Text("Aguardando proximo...");
                     }
                     return HealthChecklView(subSnapshot.data!);
                   });

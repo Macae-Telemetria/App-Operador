@@ -3,7 +3,6 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/screens/reports-screen.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/services/bluetooth-service-map.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/services/config-services.dart';
-import 'package:flutter_sit_operation_application/src/bluetooth/services/health-check-services.dart';
 import 'package:flutter_sit_operation_application/src/home_page/bl-station/config-view.dart';
 
 class DeviceScreen extends StatefulWidget {
@@ -16,7 +15,6 @@ class DeviceScreen extends StatefulWidget {
 }
 
 class _DeviceScreenState extends State<DeviceScreen> {
-  final HealthCheckService healthCheckService = HealthCheckService();
   final ConfigService configService = ConfigService();
 
   int _currentIndex = 0;
@@ -29,7 +27,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
 
   void initState() {
     super.initState();
-    _loadServices();
+    // _loadServices();
   }
 
   void _loadServices() {
@@ -67,7 +65,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
       return;
     }
 
-    healthCheckService.setCharacteristic(hCheckcharacteristic);
+    // healthCheckService.setCharacteristic(hCheckcharacteristic);
     configService.setCharacteristic(configcharacteristic);
   }
 
@@ -110,14 +108,11 @@ class _DeviceScreenState extends State<DeviceScreen> {
                         title: Text('${state.toString().split('.')[1]}.'),
                         subtitle: Text('${widget.device.remoteId}'),
                       ),
-                      Text('contectado: ${state}'),
                       IndexedStack(
                         index: _currentIndex,
                         children: [
-                          ReportsScreen(
-                              device: widget.device,
-                              healthCheckService: healthCheckService),
-
+                          ReportsScreen(device: widget.device),
+                          // Quero que seja renderizado somente quando o index for igual
                           // _buildConfigService()
                         ],
                       )

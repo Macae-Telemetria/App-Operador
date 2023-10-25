@@ -2,25 +2,64 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:flutter_sit_operation_application/src/bluetooth/services/bluetooth-service-map.dart';
 import 'package:flutter_sit_operation_application/src/domain/health-check.dart';
 
 class HealthCheckService {
-  late BluetoothCharacteristic characteristic;
+  final BluetoothDevice _device;
+
+  BluetoothCharacteristic? _characteristic;
+
   final StreamController<HealthCheck?> _controller =
       StreamController<HealthCheck?>();
 
+  HealthCheckService({required BluetoothDevice device}) : _device = device;
+
   Stream<HealthCheck?> get healthCheckStream => _controller.stream;
 
-  void setCharacteristic(c) {
-    characteristic = c;
+  BluetoothCharacteristic? findCharacteristic() {
+    if (_characteristic != null) return _characteristic;
+
+    print("HealthCheckService: Encontrando caractetisticas;");
+
+    List<BluetoothService>? availableServices = _device.servicesList;
+    if (availableServices == null) return null;
+
+    BluetoothCharacteristic? characteristic;
+    try {
+      BluetoothService stationService = availableServices.firstWhere((service) {
+        return service.uuid == Guid(BluetoothServiceMap.stationServiceId);
+      });
+
+      print("HealthCheckService: Service ${stationService.uuid}");
+
+      characteristic =
+          stationService.characteristics.firstWhere((characteristic) {
+        return characteristic.uuid ==
+            Guid(BluetoothServiceMap.healthCheckCharacteristicId);
+      });
+
+      print("HealthCheckService: Characteristic ${characteristic.uuid}");
+    } catch (error) {
+      print("HealthCheckService: Serviço ou caracteristica não encontrada.");
+    }
+
+    if (characteristic == null) {
+      return null;
+    }
+
+    return characteristic;
   }
 
-  Future<bool> startFetching(BluetoothDevice device) async {
-    print("HealthCheckService:startFetching Inciando notifcation");
+  Future<bool> startFetching() async {
+    print("HealthCheckService: startFetching Inciando notifcation");
+    BluetoothCharacteristic? characteristic = findCharacteristic();
+    if (characteristic == null) {
+      print("HealthCheckService: Unable to find healthcheck characteristic");
+      return false;
+    }
 
-    if (characteristic == null) return false;
-
-    loadData(device, characteristic).listen((configData) {
+    loadData(_device, characteristic).listen((configData) {
       _controller.sink.add(configData);
       // _controller.close(); // Close the stream after adding the data once
     });
@@ -57,7 +96,8 @@ class HealthCheckService {
             healthCheckMap['timestamp'] ?? 0,
             healthCheckMap['isWifiConnected'] == 1 ? true : false,
             healthCheckMap['isMqttConnected'] == 1 ? true : false,
-            healthCheckMap['wifiDbmLevel']);
+            healthCheckMap['wifiDbmLevel'],
+            healthCheckMap['timeRemaining']);
 
         print("HealthCheckService: final ${data.toString()}");
         controller.add(data);
@@ -76,7 +116,7 @@ class HealthCheckService {
   }
 
   Future<void> stopNotifying() async {
-    await characteristic.setNotifyValue(false, timeout: 8);
+    // await characteristic.setNotifyValue(false, timeout: 8);
   }
 
   Future<void> stopFetching() async {

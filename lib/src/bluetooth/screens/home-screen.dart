@@ -32,10 +32,8 @@ class _BTHomeScreenState extends State<BTHomeScreen> {
         child: ValueListenableBuilder<bool>(
             valueListenable: controller.isBlueToothEnabled,
             builder: (context, result, child) {
-              if (result == false) return BluetoothOffScreen();
-              return BluetoothOnScreen(
-                controller: controller,
-              );
+              if (result == false) return const BluetoothOffScreen();
+              return BluetoothOnScreen(controller: controller);
             }),
       ),
     );
