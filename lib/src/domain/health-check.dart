@@ -20,6 +20,28 @@ class HealthCheck {
 
   @override
   String toString() {
-    return "wifiDbm: $wifiDbm, isMqqtConnected: $isMqqtConnected";
+    Map data = {
+      'softwareVersion': softwareVersion,
+      'timestamp': timestamp,
+      'isWifiConnected': isWifiConnected,
+      'isMqqtConnected': isMqqtConnected,
+      'wifiDbm': wifiDbm,
+      'timeRemaining': timeRemaining
+    };
+
+    return json.encode(data);
   }
+
+  /* String toJson() {
+    Map data = {
+      'softwareVersion': softwareVersion,
+      'timestamp': timestamp,
+      'isWifiConnected': isWifiConnected,
+      'isMqqtConnected': isMqqtConnected,
+      'wifiDbm': wifiDbm,
+      'timeRemaining': timeRemaining
+    };
+
+    return json.encode(data);
+  } */
 }

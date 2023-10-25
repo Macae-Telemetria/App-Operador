@@ -1,21 +1,20 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/services/bluetooth-service-map.dart';
 import 'package:flutter_sit_operation_application/src/domain/health-check.dart';
 
 class HealthCheckService {
+  final dataNotifier = ValueNotifier<HealthCheck?>(null);
+
   final BluetoothDevice _device;
 
   BluetoothCharacteristic? _characteristic;
 
-  final StreamController<HealthCheck?> _controller =
-      StreamController<HealthCheck?>();
+  late StreamSubscription<List<int>> _streamSubscription;
 
   HealthCheckService({required BluetoothDevice device}) : _device = device;
-
-  Stream<HealthCheck?> get healthCheckStream => _controller.stream;
 
   BluetoothCharacteristic? findCharacteristic() {
     if (_characteristic != null) return _characteristic;
@@ -54,42 +53,25 @@ class HealthCheckService {
   Future<bool> startFetching() async {
     print("HealthCheckService: startFetching Inciando notifcation");
     BluetoothCharacteristic? characteristic = findCharacteristic();
+
     if (characteristic == null) {
       print("HealthCheckService: Unable to find healthcheck characteristic");
       return false;
     }
 
-    loadData(_device, characteristic).listen((configData) {
-      _controller.sink.add(configData);
-      // _controller.close(); // Close the stream after adding the data once
-    });
-
-    await characteristic.setNotifyValue(true, timeout: 8);
-    print("HealthCheckService:startFetching notifications prontas;");
-    return true;
-  }
-
-  Stream<HealthCheck?> loadData(
-      BluetoothDevice device, BluetoothCharacteristic characteristic) {
-    final controller = StreamController<HealthCheck?>();
-
     try {
-      final chrSubscription = characteristic.lastValueStream.listen((value) {
-        print("HealthCheckService: Novo valor lindo --> ${value} ");
+      _streamSubscription = characteristic.lastValueStream.listen((value) {});
 
-        if (value.isEmpty) {
-          controller.add(null);
+      // cleanup: cancel subscription when disconnected
+      _device.cancelWhenDisconnected(_streamSubscription);
+
+      _streamSubscription.onData((entry) {
+        if (entry.isEmpty) {
           return;
         }
 
-        String jsonMap = String.fromCharCodes(value);
-        print("HealthCheckService: String Parsed --> ${jsonMap}");
-
+        String jsonMap = String.fromCharCodes(entry);
         Map<String, dynamic> healthCheckMap = json.decode(jsonMap) ?? {};
-
-        print("map result aqui --> ");
-
-        print(healthCheckMap);
 
         final data = HealthCheck(
             healthCheckMap['softwareVersion'] ?? "",
@@ -99,28 +81,31 @@ class HealthCheckService {
             healthCheckMap['wifiDbmLevel'],
             healthCheckMap['timeRemaining']);
 
-        print("HealthCheckService: final ${data.toString()}");
-        controller.add(data);
-
-        return;
+        print(" Novo valor recebido: ${data}");
+        dataNotifier.value = data;
       });
-
-      // cleanup: cancel subscription when disconnected
-      device.cancelWhenDisconnected(chrSubscription);
     } catch (error) {
-      print("Deu ruim aqui");
-      controller.addError(error);
-      controller.close();
+      print("Strem subscription failed.");
+      _streamSubscription.cancel();
     }
-    return controller.stream;
-  }
 
-  Future<void> stopNotifying() async {
-    // await characteristic.setNotifyValue(false, timeout: 8);
+    await characteristic.setNotifyValue(true, timeout: 8);
+    print("HealthCheckService: startFetching notifications prontas;");
+    return true;
   }
 
   Future<void> stopFetching() async {
     print("Parando caractetistica");
-    _controller.close();
+    try {
+      print("HealthCheckService: Tentando cancelar notificações");
+      await _streamSubscription.cancel();
+      /* 
+        await _characteristic?.setNotifyValue(false); 
+        dataNotifier.value = null;
+      */
+      print("HealthCheckService: Parado com sucesso;");
+    } catch (error) {
+      print("HealthCheckService: Falou em para notificações");
+    }
   }
 }

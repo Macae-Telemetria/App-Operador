@@ -1,9 +1,9 @@
 /* bt disabled */
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:flutter_sit_operation_application/src/bluetooth/screens/fragments/healcheck-view.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/services/health-check-services.dart';
 import 'package:flutter_sit_operation_application/src/domain/health-check.dart';
-import 'package:flutter_sit_operation_application/src/home_page/bl-station/healthcheck.view.dart';
 
 class ReportsScreen extends StatefulWidget {
   final BluetoothDevice device;
@@ -32,24 +32,25 @@ class _ReportsScreenState extends State<ReportsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: FutureBuilder(
+    return Column(
+      children: [
+        FutureBuilder<bool>(
             future: widget.healthCheckService.startFetching(),
             initialData: false,
             builder: (BuildContext context, snapshot) {
-              if (snapshot.data == false)
-                return const Text("Carregando caracteristica");
-              return StreamBuilder<HealthCheck?>(
-                  stream: widget.healthCheckService.healthCheckStream,
-                  initialData: null,
-                  builder: (BuildContext context, subSnapshot) {
-                    print("DeviceScreen: snapshot");
-                    print("DeviceScreen: ${subSnapshot.data}");
-                    if (subSnapshot.data == null) {
+              if (snapshot.data == false) {
+                return const Text("Carregando...");
+              }
+              return ValueListenableBuilder<HealthCheck?>(
+                  valueListenable: widget.healthCheckService.dataNotifier,
+                  builder: (context, value, child) {
+                    if (value == null) {
                       return const Text("Aguardando proximo...");
                     }
-                    return HealthChecklView(subSnapshot.data!);
+                    return HealthChecklView(value);
                   });
-            }));
+            }),
+      ],
+    );
   }
 }

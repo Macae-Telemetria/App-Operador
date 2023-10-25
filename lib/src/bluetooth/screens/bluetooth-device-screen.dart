@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:flutter_sit_operation_application/src/bluetooth/screens/configuration-screen.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/screens/reports-screen.dart';
-import 'package:flutter_sit_operation_application/src/bluetooth/services/bluetooth-service-map.dart';
-import 'package:flutter_sit_operation_application/src/bluetooth/services/config-services.dart';
-import 'package:flutter_sit_operation_application/src/home_page/bl-station/config-view.dart';
 
 class DeviceScreen extends StatefulWidget {
-  DeviceScreen({Key? key, required this.device}) : super(key: key);
+  const DeviceScreen({Key? key, required this.device}) : super(key: key);
 
   final BluetoothDevice device;
 
@@ -15,8 +13,6 @@ class DeviceScreen extends StatefulWidget {
 }
 
 class _DeviceScreenState extends State<DeviceScreen> {
-  final ConfigService configService = ConfigService();
-
   int _currentIndex = 0;
 
   void _onItemTapped(int index) {
@@ -27,65 +23,6 @@ class _DeviceScreenState extends State<DeviceScreen> {
 
   void initState() {
     super.initState();
-    // _loadServices();
-  }
-
-  void _loadServices() {
-    List<BluetoothService>? availableServices = widget.device.servicesList;
-    if (availableServices == null) return;
-
-    BluetoothCharacteristic? configcharacteristic;
-    BluetoothCharacteristic? hCheckcharacteristic;
-
-    try {
-      BluetoothService stationService = availableServices.firstWhere((service) {
-        return service.uuid == Guid(BluetoothServiceMap.stationServiceId);
-      });
-
-      print("DeviceScreen: Service ${stationService.uuid}");
-
-      configcharacteristic =
-          stationService.characteristics.firstWhere((characteristic) {
-        return characteristic.uuid.toString().toLowerCase() ==
-            BluetoothServiceMap.configCharacteristicId;
-      });
-
-      hCheckcharacteristic =
-          stationService.characteristics.firstWhere((characteristic) {
-        return characteristic.uuid ==
-            Guid(BluetoothServiceMap.healthCheckCharacteristicId);
-      });
-
-      print("DeviceScreen: Characteristic ${configcharacteristic.uuid}");
-    } catch (error) {
-      print("DeviceScreen: Serviço ou caracteristica não encontrada.");
-    }
-
-    if (configcharacteristic == null || hCheckcharacteristic == null) {
-      return;
-    }
-
-    // healthCheckService.setCharacteristic(hCheckcharacteristic);
-    configService.setCharacteristic(configcharacteristic);
-  }
-
-  Widget _buildConfigService() {
-    if (configService == null) return const Text("Não disponivel");
-    return FutureBuilder(
-        future: configService!.loadConfigData(),
-        initialData: null,
-        builder: (BuildContext context, snapshot) {
-          print("DeviceScreen: snapshot");
-          print("DeviceScreen: ${snapshot.data}");
-          if (snapshot.data == null) {
-            return const Text("Aguardando configuração...");
-          }
-          return ConfigView(
-              config: (snapshot.data!),
-              onSubmit: (config) async {
-                return true;
-              });
-        });
   }
 
   @override
@@ -111,9 +48,12 @@ class _DeviceScreenState extends State<DeviceScreen> {
                       IndexedStack(
                         index: _currentIndex,
                         children: [
-                          ReportsScreen(device: widget.device),
-                          // Quero que seja renderizado somente quando o index for igual
-                          // _buildConfigService()
+                          (_currentIndex == 0)
+                              ? ReportsScreen(device: widget.device)
+                              : const Text('Não carregado.'),
+                          (_currentIndex == 1)
+                              ? ConfigurationScreen(device: widget.device)
+                              : const Text('Não carregado.'),
                         ],
                       )
                     ],

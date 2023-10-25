@@ -90,7 +90,7 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
                 initialData: false,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
+                    return const Center(
                       child: Column(
                         children: [
                           Text('Carregando serviços...'),
