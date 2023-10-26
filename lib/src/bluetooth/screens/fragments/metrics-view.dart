@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sit_operation_application/src/domain/Metrics.dart';
-import 'package:flutter_sit_operation_application/src/widgets/health-tile.dart';
 import 'package:flutter_sit_operation_application/src/widgets/metric-tile.dart';
 
 class MetricsView extends StatelessWidget {
   final Metrics metrics;
 
-  const MetricsView(this.metrics);
+  const MetricsView(this.metrics, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,49 +19,49 @@ class MetricsView extends StatelessWidget {
             name: "Temperatura:",
             icon: Icons.thermostat,
             onTap: () {},
-            subtitle: '30°',
+            subtitle: '${metrics.temperatura ?? 0}C°',
           ),
           MetricTile(
             name: "Umidade:",
             icon: Icons.water,
             onTap: () {},
-            subtitle: '30°',
+            subtitle: '${metrics.umidade_ar ?? 0}%',
           ),
           MetricTile(
             name: "Pressão:",
             icon: Icons.thermostat_auto_sharp,
             onTap: () {},
-            subtitle: '30°',
+            subtitle: '${metrics.pressao ?? 0}%',
           ),
           MetricTile(
             name: "Chuva Acumulada:",
             icon: Icons.water_drop,
             onTap: () {},
-            subtitle: '30°',
+            subtitle: '${metrics.volume_chuva ?? 0} ml',
           ),
           MetricTile(
             name: "Diração do vento:",
             icon: Icons.directions_outlined,
             onTap: () {},
-            subtitle: '30°',
+            subtitle: '${metrics.dir_vento ?? "Não identificado"}',
           ),
           MetricTile(
             name: "Velocidade do vento:",
             icon: Icons.wind_power,
             onTap: () {},
-            subtitle: '30°',
+            subtitle: '${metrics.velocidade_vento ?? "Não identificado"}',
           ),
           MetricTile(
             name: "Rajada de vento",
             icon: Icons.storm_outlined,
             onTap: () {},
-            subtitle: '30°',
+            subtitle: '${metrics.rajada_vento ?? "Não identificado"}',
           ),
           MetricTile(
             name: "Timestamp:",
             icon: Icons.timer,
             onTap: () {},
-            subtitle: '30°',
+            subtitle: '${metrics.timestamp ?? "Não identificado"}',
           ),
         ],
       ),

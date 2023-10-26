@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sit_operation_application/src/domain/health-check.dart';
 import 'package:flutter_sit_operation_application/src/widgets/health-tile.dart';
-import 'package:get/state_manager.dart';
 
 class HealthChecklView extends StatelessWidget {
   final HealthCheck healthCheck;
@@ -42,7 +41,7 @@ class HealthChecklView extends StatelessWidget {
               type: 3),
           HealthTile(
               name: "Proxima medição:",
-              subtitle: 'ms',
+              subtitle: '${(healthCheck.timeRemaining / 1000).ceil()}ms',
               isconnected: true,
               onTap: () {},
               icon: Icons.timer,

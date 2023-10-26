@@ -1,33 +1,20 @@
-import 'dart:convert';
-import 'dart:ffi';
-
 class Metrics {
-  /* String softwareVersion;
-  int timestamp;
-  bool isWifiConnected;
-  bool isMqqtConnected;
-  int wifiDbm;
-  int timeRemaining; */
+  int? timestamp;
+  double? temperatura;
+  double? umidade_ar;
+  double? velocidade_vento;
+  double? rajada_vento;
+  int? dir_vento;
+  double? volume_chuva;
+  double? pressao;
 
   Metrics(
-      /* this.softwareVersion,
-    this.timestamp,
-    this.isWifiConnected,
-    this.isMqqtConnected,
-    this.wifiDbm,
-    this.timeRemaining, */
-      );
-
-  /* String toJson() {
-    Map data = {
-      'softwareVersion': softwareVersion,
-      'timestamp': timestamp,
-      'isWifiConnected': isWifiConnected,
-      'isMqqtConnected': isMqqtConnected,
-      'wifiDbm': wifiDbm,
-      'timeRemaining': timeRemaining
-    };
-
-    return json.encode(data);
-  } */
+      this.timestamp,
+      this.temperatura,
+      this.umidade_ar,
+      this.velocidade_vento,
+      this.rajada_vento,
+      this.dir_vento,
+      this.volume_chuva,
+      this.pressao);
 }
