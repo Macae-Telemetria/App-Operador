@@ -45,10 +45,36 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
         .toList();
   }
 
+  renderSearchLoading() {
+    return Container(
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        image: DecorationImage(
+          image: AssetImage(
+            "assets/images/bluetooth-search.gif",
+          ),
+          fit: BoxFit.cover,
+          alignment: Alignment.center,
+        ),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(108),
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+        ),
+        child: const Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: Colors.white,
       body: ValueListenableBuilder<BluetoothDevice?>(
           valueListenable: widget.controller.connectedDevice,
           builder: (context, device, child) {
@@ -59,7 +85,6 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        ..._renderScanResult(context, result),
                         StreamBuilder<bool>(
                             stream: FlutterBluePlus.isScanning,
                             initialData: false,
@@ -67,12 +92,17 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
                               bool isScanning = snapshot.data ?? false;
                               return Column(
                                 children: [
+                                  if (!isScanning)
+                                    ..._renderScanResult(context, result),
                                   Align(
                                       alignment: Alignment.bottomCenter,
-                                      child: FloatingSearchButton(
-                                          isRunning: snapshot.data!,
-                                          onStart: widget.controller.scan,
-                                          onStop: widget.controller.stopScan))
+                                      child: isScanning
+                                          ? renderSearchLoading()
+                                          : FloatingSearchButton(
+                                              isRunning: snapshot.data!,
+                                              onStart: widget.controller.scan,
+                                              onStop:
+                                                  widget.controller.stopScan)),
                                 ],
                               );
                             }),
