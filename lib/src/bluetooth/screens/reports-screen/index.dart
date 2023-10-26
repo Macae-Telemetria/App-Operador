@@ -45,7 +45,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   valueListenable: widget.healthCheckService.dataNotifier,
                   builder: (context, value, child) {
                     if (value == null) {
-                      return const Text("Aguardando proximo...");
+                      return const CircularProgressIndicator();
                     }
                     return HealthChecklView(value);
                   });

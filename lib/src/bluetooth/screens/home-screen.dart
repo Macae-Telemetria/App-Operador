@@ -25,9 +25,6 @@ class _BTHomeScreenState extends State<BTHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Conectar a Estação'),
-      ),
       body: Center(
         child: ValueListenableBuilder<bool>(
             valueListenable: controller.isBlueToothEnabled,

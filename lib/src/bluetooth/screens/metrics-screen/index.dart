@@ -114,7 +114,7 @@ class _MetricsScreenState extends State<MetricsScreen> {
           print("ConfigurationScreen: snapshot");
           print(snapshot.data);
           if (snapshot.data == null) {
-            return const Text("Carregando...");
+            return const CircularProgressIndicator();
           }
           return MetricsView(snapshot.data!);
         });

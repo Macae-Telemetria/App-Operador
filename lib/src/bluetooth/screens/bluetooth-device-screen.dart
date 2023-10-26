@@ -3,6 +3,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/screens/configuration-screen.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/screens/metrics-screen/index.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/screens/reports-screen/index.dart';
+import 'package:flutter_sit_operation_application/src/widgets/loading-dialog.dart';
 
 class DeviceScreen extends StatefulWidget {
   const DeviceScreen({Key? key, required this.device}) : super(key: key);
@@ -29,6 +30,9 @@ class _DeviceScreenState extends State<DeviceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Estação Conectada'),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -45,6 +49,23 @@ class _DeviceScreenState extends State<DeviceScreen> {
                             : const Icon(Icons.bluetooth_disabled),
                         title: Text('${state.toString().split('.')[1]}.'),
                         subtitle: Text('${widget.device.remoteId}'),
+                        trailing: ElevatedButton(
+                          child: Text('Descontetar'),
+                          onPressed: () {
+                            showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (_) {
+                                  return const LoadingDialog(
+                                    title: "Desconectando",
+                                  );
+                                });
+
+                            widget.device.disconnect().then((_) {
+                              Navigator.of(context).pop();
+                            });
+                          },
+                        ),
                       ),
                       IndexedStack(
                         index: _currentIndex,

@@ -56,30 +56,27 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
               return ValueListenableBuilder<List<ScanResult>>(
                   valueListenable: widget.controller.scanResults,
                   builder: (context, result, child) {
-                    return Container(
-                      child: Column(
-                        children: [
-                          ..._renderScanResult(context, result),
-                          StreamBuilder<bool>(
-                              stream: FlutterBluePlus.isScanning,
-                              initialData: false,
-                              builder: (c, snapshot) {
-                                bool isScanning = snapshot.data ?? false;
-                                return Column(
-                                  children: [
-                                    Text(
-                                        "${isScanning ? "Procurando" : "..."}"),
-                                    Align(
-                                        alignment: Alignment.bottomCenter,
-                                        child: FloatingSearchButton(
-                                            isRunning: snapshot.data!,
-                                            onStart: widget.controller.scan,
-                                            onStop: widget.controller.stopScan))
-                                  ],
-                                );
-                              }),
-                        ],
-                      ),
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ..._renderScanResult(context, result),
+                        StreamBuilder<bool>(
+                            stream: FlutterBluePlus.isScanning,
+                            initialData: false,
+                            builder: (c, snapshot) {
+                              bool isScanning = snapshot.data ?? false;
+                              return Column(
+                                children: [
+                                  Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: FloatingSearchButton(
+                                          isRunning: snapshot.data!,
+                                          onStart: widget.controller.scan,
+                                          onStop: widget.controller.stopScan))
+                                ],
+                              );
+                            }),
+                      ],
                     );
                   });
             }
@@ -90,6 +87,7 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           CircularProgressIndicator(),
                         ],

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:flutter_sit_operation_application/src/widgets/loading-dialog.dart';
 
 class BluetoothController {
   final connectedDevice = ValueNotifier<BluetoothDevice?>(null);
@@ -12,7 +13,7 @@ class BluetoothController {
   scan() async {
     print('BluetoothController: Tentando escaner ...');
     scanResults.value = [];
-    await FlutterBluePlus.startScan(timeout: Duration(seconds: 4));
+    await FlutterBluePlus.startScan(timeout: const Duration(seconds: 4));
   }
 
   stopScan() async {
@@ -98,29 +99,10 @@ class BluetoothController {
       });
 
       showDialog(
-          // The user CANNOT close this dialog  by pressing outsite it
           barrierDismissible: false,
           context: context,
           builder: (_) {
-            return const Dialog(
-              // The background color
-              backgroundColor: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // The loading indicator
-                    CircularProgressIndicator(),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    // Some text
-                    Text('Conectando...')
-                  ],
-                ),
-              ),
-            );
+            return LoadingDialog();
           });
 
       await device.connect(timeout: Duration(seconds: 8), autoConnect: true);
@@ -132,7 +114,6 @@ class BluetoothController {
       // close the dialog automatically
     } catch (err) {
       print("BluetoothController: Failed to connect with device");
-      print(err);
       device.disconnect();
       Navigator.of(context).pop();
       return false;

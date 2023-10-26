@@ -40,10 +40,8 @@ class _ConfigurationScreenState extends State<ConfigurationScreen> {
         future: widget.configService.loadConfigData(),
         initialData: null,
         builder: (BuildContext context, snapshot) {
-          print("ConfigurationScreen: snapshot");
-          print("ConfigurationScreen: ${snapshot.data}");
           if (snapshot.data == null) {
-            return const Text("Carregando...");
+            return const CircularProgressIndicator();
           }
           return ConfigView(config: (snapshot.data!), onSubmit: _handleSubmit);
         });
