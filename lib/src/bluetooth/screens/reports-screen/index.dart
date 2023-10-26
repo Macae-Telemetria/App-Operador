@@ -39,7 +39,10 @@ class _ReportsScreenState extends State<ReportsScreen> {
             initialData: false,
             builder: (BuildContext context, snapshot) {
               if (snapshot.data == false) {
-                return const Text("Carregando...");
+                return const CircularProgressIndicator(
+                  color: Colors.blue,
+                  strokeWidth: 6,
+                );
               }
               return ValueListenableBuilder<HealthCheck?>(
                   valueListenable: widget.healthCheckService.dataNotifier,

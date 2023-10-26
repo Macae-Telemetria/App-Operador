@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/screens/fragments/config-view.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/services/config-services.dart';
+import 'package:flutter_sit_operation_application/src/widgets/loading-dialog.dart';
 
 class ConfigurationScreen extends StatefulWidget {
   final BluetoothDevice device;
@@ -30,7 +31,19 @@ class _ConfigurationScreenState extends State<ConfigurationScreen> {
   }
 
   Future<bool> _handleSubmit(config) async {
-    await widget.configService.writeConfigData(config);
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) {
+          return const LoadingDialog(
+            title: "Salvando",
+            subtitle: "A estação será reiniciada, em seguida.",
+          );
+        });
+
+    await widget.configService.writeConfigData(config).then((_) {
+      Navigator.of(context).pop();
+    });
     return true;
   }
 

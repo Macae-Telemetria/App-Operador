@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class LoadingDialog extends StatelessWidget {
   final String title;
+  final String? subtitle;
 
-  const LoadingDialog({super.key, this.title = 'Carregando'});
+  const LoadingDialog({super.key, this.title = 'Carregando', this.subtitle});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,17 @@ class LoadingDialog extends StatelessWidget {
             const SizedBox(
               height: 16,
             ),
-            Text(title)
+            Text(
+              title,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+            ),
+            Text(
+              subtitle ?? "",
+              style: TextStyle(
+                  color: Colors.black.withOpacity(0.6),
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal),
+            )
           ],
         ),
       ),

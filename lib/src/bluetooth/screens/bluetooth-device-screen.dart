@@ -35,6 +35,8 @@ class _DeviceScreenState extends State<DeviceScreen> {
       ),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             StreamBuilder<BluetoothConnectionState>(
                 stream: widget.device.connectionState,
@@ -42,29 +44,34 @@ class _DeviceScreenState extends State<DeviceScreen> {
                 builder: (c, snapshot) {
                   var state = snapshot.data!;
                   return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ListTile(
-                        leading: (state == BluetoothConnectionState.connected)
-                            ? const Icon(Icons.bluetooth_connected)
-                            : const Icon(Icons.bluetooth_disabled),
-                        title: Text('${state.toString().split('.')[1]}.'),
-                        subtitle: Text('${widget.device.remoteId}'),
-                        trailing: ElevatedButton(
-                          child: Text('Descontetar'),
-                          onPressed: () {
-                            showDialog(
-                                barrierDismissible: false,
-                                context: context,
-                                builder: (_) {
-                                  return const LoadingDialog(
-                                    title: "Desconectando",
-                                  );
-                                });
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListTile(
+                          leading: (state == BluetoothConnectionState.connected)
+                              ? const Icon(Icons.bluetooth_connected)
+                              : const Icon(Icons.bluetooth_disabled),
+                          title: Text('${state.toString().split('.')[1]}.'),
+                          subtitle: Text('${widget.device.remoteId}'),
+                          trailing: ElevatedButton(
+                            child: const Text('Descontetar'),
+                            onPressed: () {
+                              showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (_) {
+                                    return const LoadingDialog(
+                                      title: "Desconectando",
+                                    );
+                                  });
 
-                            widget.device.disconnect().then((_) {
-                              Navigator.of(context).pop();
-                            });
-                          },
+                              widget.device.disconnect().then((_) {
+                                Navigator.of(context).pop();
+                              });
+                            },
+                          ),
                         ),
                       ),
                       IndexedStack(
@@ -90,12 +97,12 @@ class _DeviceScreenState extends State<DeviceScreen> {
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.bluetooth_audio_rounded),
-            label: 'HealthCheck',
+            icon: Icon(Icons.health_and_safety_sharp),
+            label: 'Saude',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.waves_outlined),
-            label: 'Metricas',
+            icon: Icon(Icons.perm_device_information),
+            label: 'Leitura',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings_sharp),
