@@ -25,10 +25,13 @@ class HealthTile extends StatelessWidget {
         subtitle: Text(subtitle),
         onTap: onTap,
         leading: Icon(icon, size: 28.0),
-        trailing: Icon(isconnected ? Icons.lightbulb : Icons.lightbulb,
+        trailing: Icon(
+            isconnected
+                ? Icons.check_circle
+                : Icons.check_circle_outline_outlined,
             color:
                 isconnected ? Colors.green : Colors.grey, // Set the color here
-            size: 28.0 // Set the size if needed));
+            size: 32.0 // Set the size if needed));
             ));
   }
 }

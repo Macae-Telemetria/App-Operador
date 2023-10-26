@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/screens/configuration-screen.dart';
-import 'package:flutter_sit_operation_application/src/bluetooth/screens/reports-screen.dart';
+import 'package:flutter_sit_operation_application/src/bluetooth/screens/metrics-screen/index.dart';
+import 'package:flutter_sit_operation_application/src/bluetooth/screens/reports-screen/index.dart';
 
 class DeviceScreen extends StatefulWidget {
   const DeviceScreen({Key? key, required this.device}) : super(key: key);
@@ -52,6 +53,9 @@ class _DeviceScreenState extends State<DeviceScreen> {
                               ? ReportsScreen(device: widget.device)
                               : const Text('Não carregado.'),
                           (_currentIndex == 1)
+                              ? MetricsScreen(device: widget.device)
+                              : const Text('Não carregado.'),
+                          (_currentIndex == 2)
                               ? ConfigurationScreen(device: widget.device)
                               : const Text('Não carregado.'),
                         ],
@@ -67,6 +71,10 @@ class _DeviceScreenState extends State<DeviceScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.bluetooth_audio_rounded),
             label: 'HealthCheck',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.waves_outlined),
+            label: 'Metricas',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings_sharp),

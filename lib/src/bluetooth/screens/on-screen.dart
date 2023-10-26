@@ -4,6 +4,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/controller/bluetooth-controller.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/screens/bluetooth-device-screen.dart';
 import 'package:flutter_sit_operation_application/src/widgets/device-tile.dart';
+import 'package:flutter_sit_operation_application/src/widgets/floating-search-button.dart';
 
 class BluetoothOnScreen extends StatefulWidget {
   final BluetoothController controller;
@@ -55,33 +56,30 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
               return ValueListenableBuilder<List<ScanResult>>(
                   valueListenable: widget.controller.scanResults,
                   builder: (context, result, child) {
-                    return Column(
-                      children: [
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: _renderScanResult(context, result)),
-                        StreamBuilder<bool>(
-                            stream: FlutterBluePlus.isScanning,
-                            initialData: false,
-                            builder: (c, snapshot) {
-                              bool isScanning = snapshot.data ?? false;
-                              return Column(
-                                children: [
-                                  Text("${isScanning ? "Procurando" : "..."}"),
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        if (isScanning) {
-                                          widget.controller.stopScan();
-                                          return;
-                                        }
-                                        widget.controller.scan();
-                                      },
-                                      child: Text(
-                                          "${isScanning ? "Parar" : "Escanerar"}")),
-                                ],
-                              );
-                            }),
-                      ],
+                    return Container(
+                      child: Column(
+                        children: [
+                          ..._renderScanResult(context, result),
+                          StreamBuilder<bool>(
+                              stream: FlutterBluePlus.isScanning,
+                              initialData: false,
+                              builder: (c, snapshot) {
+                                bool isScanning = snapshot.data ?? false;
+                                return Column(
+                                  children: [
+                                    Text(
+                                        "${isScanning ? "Procurando" : "..."}"),
+                                    Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: FloatingSearchButton(
+                                            isRunning: snapshot.data!,
+                                            onStart: widget.controller.scan,
+                                            onStop: widget.controller.stopScan))
+                                  ],
+                                );
+                              }),
+                        ],
+                      ),
                     );
                   });
             }
@@ -93,7 +91,6 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
                     return const Center(
                       child: Column(
                         children: [
-                          Text('Carregando serviços...'),
                           CircularProgressIndicator(),
                         ],
                       ),

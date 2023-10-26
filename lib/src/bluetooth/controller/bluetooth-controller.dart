@@ -12,7 +12,7 @@ class BluetoothController {
   scan() async {
     print('BluetoothController: Tentando escaner ...');
     scanResults.value = [];
-    await FlutterBluePlus.startScan();
+    await FlutterBluePlus.startScan(timeout: Duration(seconds: 4));
   }
 
   stopScan() async {
