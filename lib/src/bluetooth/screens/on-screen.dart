@@ -18,7 +18,9 @@ class BluetoothOnScreen extends StatefulWidget {
 
 class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
   List<Widget> _renderScanResult(context, List<ScanResult> scanResult) {
-    if (scanResult.isEmpty) return [];
+    if (scanResult.isEmpty) {
+      return [];
+    }
 
     onPress(BluetoothDevice device) async {
       try {

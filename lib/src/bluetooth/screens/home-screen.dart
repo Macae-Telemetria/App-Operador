@@ -5,7 +5,9 @@ import 'package:flutter_sit_operation_application/src/bluetooth/screens/on-scree
 
 /// Displays a list of SampleItems.
 class BTHomeScreen extends StatefulWidget {
-  BTHomeScreen({super.key});
+  final BluetoothController controller;
+
+  const BTHomeScreen({super.key, required this.controller});
 
   static const routeName = '/';
 
@@ -14,12 +16,10 @@ class BTHomeScreen extends StatefulWidget {
 }
 
 class _BTHomeScreenState extends State<BTHomeScreen> {
-  final BluetoothController controller = BluetoothController();
-
   @override
   void initState() {
     super.initState();
-    controller.setup();
+    widget.controller.setup();
   }
 
   @override
@@ -27,10 +27,10 @@ class _BTHomeScreenState extends State<BTHomeScreen> {
     return Scaffold(
       body: Center(
         child: ValueListenableBuilder<bool>(
-            valueListenable: controller.isBlueToothEnabled,
+            valueListenable: widget.controller.isBlueToothEnabled,
             builder: (context, result, child) {
               if (result == false) return const BluetoothOffScreen();
-              return BluetoothOnScreen(controller: controller);
+              return BluetoothOnScreen(controller: widget.controller);
             }),
       ),
     );

@@ -28,16 +28,7 @@ class BluetoothController {
   _listenScanResult() async {
     var subscription = FlutterBluePlus.scanResults.listen(
       (results) {
-        /* print('Novo rsultado: ${results}');
-        for (ScanResult r in results) {
-          if (seen.value.contains(r.device.remoteId) == false) {
-            print(
-                '${r.device.remoteId}: "${r.advertisementData.localName}" found! rssi: ${r.rssi}');
-            seen.value.add(r.device.remoteId);
-            scanResults.value = r;
-            scanResults.value = scanResults.value;
-          }
-        } */
+        print('Scan: Novo rsultado: ${results}');
         scanResults.value = results;
       },
     );
@@ -102,7 +93,9 @@ class BluetoothController {
           barrierDismissible: false,
           context: context,
           builder: (_) {
-            return LoadingDialog();
+            return const LoadingDialog(
+              title: "Conectado...",
+            );
           });
 
       await device.connect(timeout: Duration(seconds: 8), autoConnect: true);
@@ -150,3 +143,13 @@ class BluetoothController {
     }
   }
 }
+
+
+  /* if (connectedDevice == null) {
+          for (ScanResult r in results) {
+            print(
+                '${r.device.remoteId}: "${r.advertisementData.localName}" found! rssi: ${r.rssi}');
+            connectDevice(r.device);
+            break;
+          }
+        } */

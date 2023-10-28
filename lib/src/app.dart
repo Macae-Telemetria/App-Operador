@@ -74,7 +74,7 @@ class MyApp extends StatelessWidget {
 
                   case BTHomeScreen.routeName:
                   default:
-                    return BTHomeScreen();
+                    return BTHomeScreen(controller: bluetoothController);
                 }
               },
             );
