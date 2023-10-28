@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/controller/bluetooth-controller.dart';
+import 'package:flutter_sit_operation_application/src/bluetooth/controller/sound-controller.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/screens/scan-result.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/screens/bluetooth-device-screen.dart';
 import 'package:flutter_sit_operation_application/src/widgets/floating-search-button.dart';
@@ -16,6 +17,8 @@ class BluetoothOnScreen extends StatefulWidget {
 }
 
 class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
+  final SoundController soundController = SoundController();
+
   bool _isModalOpen = false;
 
   renderSearchLoading() {
@@ -43,6 +46,8 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
     if (!_isModalOpen) {
       _isModalOpen = true;
 
+      soundController.play();
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialog(
           context: context,
@@ -58,7 +63,6 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
                 // onSubmit
                 try {
                   await widget.controller.connectDevice(context, device);
-
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text("Conectado com sucesso!"),
                   ));
