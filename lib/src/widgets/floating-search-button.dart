@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_sit_operation_application/src/shared/styles.dart';
 
 class FloatingSearchButton extends StatelessWidget {
   final bool isRunning;
@@ -14,10 +15,15 @@ class FloatingSearchButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton.large(
-      onPressed: () => isRunning ? onStop() : onStart(),
-      backgroundColor: isRunning ? Colors.red : Colors.blue,
-      child: isRunning ? const Icon(Icons.stop) : const Icon(Icons.search),
-    );
+    return Container(
+        width: 140,
+        height: 140,
+        child: FloatingActionButton.large(
+          onPressed: () => isRunning ? onStop() : onStart(),
+          backgroundColor: isRunning ? Colors.red : secondaryColor,
+          child: isRunning
+              ? const Icon(Icons.stop)
+              : const Icon(Icons.search, size: 48),
+        ));
   }
 }

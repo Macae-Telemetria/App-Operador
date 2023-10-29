@@ -9,7 +9,7 @@ class BTHomeScreen extends StatefulWidget {
 
   const BTHomeScreen({super.key, required this.controller});
 
-  static const routeName = '/';
+  static const routeName = '/bt';
 
   @override
   State<BTHomeScreen> createState() => _BTHomeScreenState();

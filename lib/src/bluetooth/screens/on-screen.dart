@@ -4,6 +4,7 @@ import 'package:flutter_sit_operation_application/src/bluetooth/controller/bluet
 import 'package:flutter_sit_operation_application/src/bluetooth/controller/sound-controller.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/screens/scan-result.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/screens/bluetooth-device-screen.dart';
+import 'package:flutter_sit_operation_application/src/shared/styles.dart';
 import 'package:flutter_sit_operation_application/src/widgets/floating-search-button.dart';
 
 class BluetoothOnScreen extends StatefulWidget {
@@ -86,67 +87,109 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: ValueListenableBuilder<BluetoothDevice?>(
-          valueListenable: widget.controller.connectedDevice,
-          builder: (context, device, child) {
-            if (device == null) {
-              return ValueListenableBuilder<List<ScanResult>>(
-                  valueListenable: widget.controller.scanResults,
-                  builder: (context, result, child) {
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        StreamBuilder<bool>(
-                            stream: FlutterBluePlus.isScanning,
-                            initialData: false,
-                            builder: (c, snapshot) {
-                              bool isScanning = snapshot.data ?? false;
-
-                              if (!isScanning && result.isNotEmpty) {
-                                _showModal(context, result);
-                              }
-
-                              return Column(
-                                children: [
-                                  Align(
-                                      alignment: Alignment.bottomCenter,
-                                      child: isScanning
-                                          ? renderSearchLoading()
-                                          : FloatingSearchButton(
-                                              isRunning: snapshot.data!,
-                                              onStart: widget.controller.scan,
-                                              onStop:
-                                                  widget.controller.stopScan)),
-                                ],
-                              );
-                            }),
-                      ],
-                    );
-                  });
-            }
-            return FutureBuilder<bool>(
-                future: widget.controller.discoverServices(device),
-                initialData: false,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: Column(
+      appBar: AppBar(
+        backgroundColor: secondaryColor, // Set the background color
+        title: const Text(
+          "Sit Operador",
+          style: TextStyle(
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.info,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              /* showModalBottomSheet(
+                context: context,
+                builder: (BuildContext context) {
+                  // return InfoModal();
+                },
+              ); */
+            },
+          ),
+        ],
+      ),
+      backgroundColor: Colors.white, // Set the background color
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Colors.white,
+              Color.fromARGB(255, 200, 207, 216),
+              Colors.white
+            ], // Define the gradient colors
+            begin:
+                Alignment.topLeft, // Define the starting point of the gradient
+            end: Alignment
+                .bottomRight, // Define the ending point of the gradient
+          ),
+        ),
+        child: ValueListenableBuilder<BluetoothDevice?>(
+            valueListenable: widget.controller.connectedDevice,
+            builder: (context, device, child) {
+              if (device == null) {
+                return ValueListenableBuilder<List<ScanResult>>(
+                    valueListenable: widget.controller.scanResults,
+                    builder: (context, result, child) {
+                      return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          CircularProgressIndicator(),
+                          StreamBuilder<bool>(
+                              stream: FlutterBluePlus.isScanning,
+                              initialData: false,
+                              builder: (c, snapshot) {
+                                bool isScanning = snapshot.data ?? false;
+
+                                if (!isScanning && result.isNotEmpty) {
+                                  _showModal(context, result);
+                                }
+
+                                return Column(
+                                  children: [
+                                    Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: /*  isScanning
+                                            ? renderSearchLoading()
+                                            : */
+                                            FloatingSearchButton(
+                                                isRunning: snapshot.data!,
+                                                onStart: widget.controller.scan,
+                                                onStop: widget
+                                                    .controller.stopScan)),
+                                  ],
+                                );
+                              }),
                         ],
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
-                  } else if (snapshot.hasData) {
-                    return DeviceScreen(device: device);
-                  } else {
-                    return const Text('Não é uma estação valida!');
-                  }
-                });
-          }),
+                      );
+                    });
+              }
+              return FutureBuilder<bool>(
+                  future: widget.controller.discoverServices(device),
+                  initialData: false,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(),
+                          ],
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else if (snapshot.hasData) {
+                      return DeviceScreen(device: device);
+                    } else {
+                      return const Text('Não é uma estação valida!');
+                    }
+                  });
+            }),
+      ),
     );
   }
 }

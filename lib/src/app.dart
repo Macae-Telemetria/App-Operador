@@ -1,8 +1,10 @@
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/controller/bluetooth-controller.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/screens/home-screen.dart';
+import 'package:flutter_sit_operation_application/src/shared/home/home-screen.dart';
 
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
@@ -71,10 +73,15 @@ class MyApp extends StatelessWidget {
                 switch (routeSettings.name) {
                   case SettingsView.routeName:
                     return SettingsView(controller: settingsController);
-
                   case BTHomeScreen.routeName:
                   default:
-                    return BTHomeScreen(controller: bluetoothController);
+                    // return BTHomeScreen(controller: bluetoothController);
+                    return AnimatedSplashScreen(
+                      splash: 'assets/images/logo.png',
+                      splashIconSize: double.infinity - 108,
+                      nextScreen: BTHomeScreen(controller: bluetoothController),
+                      splashTransition: SplashTransition.fadeTransition,
+                    );
                 }
               },
             );
