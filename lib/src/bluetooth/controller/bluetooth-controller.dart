@@ -40,8 +40,17 @@ class BluetoothController {
   _listenScanResult() async {
     var subscription = FlutterBluePlus.scanResults.listen(
       (results) {
-        print('Scan: Novo rsultado: ${results}');
-        scanResults.value = results;
+        print('BluetoothController: Novos resultados: ${results}');
+
+        if (results.isNotEmpty) {
+          String targetPrefix = "SIT-BOARD-";
+          List<ScanResult> filteredResults = results
+              .where((result) =>
+                  result.device.platformName != null &&
+                  result.device.platformName.startsWith(targetPrefix))
+              .toList();
+          scanResults.value = filteredResults;
+        }
       },
     );
   }
@@ -93,7 +102,7 @@ class BluetoothController {
 
       // listen for disconnection
       device.connectionState.listen((BluetoothConnectionState state) async {
-        print('Dispositovo estaá ${state}');
+        print('Dispositivo está ${state}');
         if (state == BluetoothConnectionState.disconnected) {
           // 1. typically, start a periodic timer that tries to
           //    periodically reconnect, or just call connect() again right now
