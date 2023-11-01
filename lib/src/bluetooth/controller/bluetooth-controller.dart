@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_sit_operation_application/src/widgets/loading-dialog.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class BluetoothController {
   final connectedDevice = ValueNotifier<BluetoothDevice?>(null);
@@ -12,8 +13,19 @@ class BluetoothController {
 
   scan() async {
     print('BluetoothController: Tentando escaner ...');
-    scanResults.value = [];
-    await FlutterBluePlus.startScan(timeout: const Duration(seconds: 4));
+    try {
+      if (await Permission.bluetoothScan.request().isGranted) {
+        if (await Permission.bluetoothConnect.request().isGranted) {
+          print('BluetoothController: tempos permissção ...');
+
+          scanResults.value = [];
+          await FlutterBluePlus.startScan(
+              timeout: Duration(seconds: 4), androidUsesFineLocation: true);
+        }
+      }
+    } catch (error) {
+      print('BluetoothController: Captured execption: ${error}');
+    }
   }
 
   stopScan() async {
