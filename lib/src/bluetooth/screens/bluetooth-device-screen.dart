@@ -77,9 +77,6 @@ class _DeviceScreenState extends State<DeviceScreen> {
                           (_currentIndex == 0)
                               ? ReportsScreen(device: widget.device)
                               : const Text('Não carregado.'),
-                          (_currentIndex == 1)
-                              ? MetricsScreen(device: widget.device)
-                              : const Text('Não carregado.'),
                           (_currentIndex == 2)
                               ? ConfigurationScreen(device: widget.device)
                               : const Text('Não carregado.'),
@@ -96,10 +93,6 @@ class _DeviceScreenState extends State<DeviceScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.health_and_safety_sharp),
             label: 'Saude',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.perm_device_information),
-            label: 'Leitura',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings_sharp),

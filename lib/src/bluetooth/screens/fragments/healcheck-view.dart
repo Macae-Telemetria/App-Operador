@@ -41,7 +41,7 @@ class HealthChecklView extends StatelessWidget {
               type: 3),
           HealthTile(
               name: "Proxima medição:",
-              subtitle: '${(healthCheck.timeRemaining / 1000).ceil()}ms',
+              subtitle: '${(healthCheck.timeRemaining / 1000).ceil()} segundos',
               isconnected: true,
               onTap: () {},
               icon: Icons.timer,
