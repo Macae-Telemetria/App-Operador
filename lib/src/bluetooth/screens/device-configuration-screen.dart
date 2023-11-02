@@ -43,7 +43,7 @@ class _ConfigurationScreenState extends State<DeviceConfigurationScreen> {
         context: context,
         builder: (_) {
           return const LoadingDialog(
-            title: "Reiniciando estação",
+            title: "Reiniciando...",
           );
         });
 
@@ -54,6 +54,14 @@ class _ConfigurationScreenState extends State<DeviceConfigurationScreen> {
   }
 
   Future<bool> _handleBleShutdown() async {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) {
+          return const LoadingDialog(
+            title: "Desligando Bluetooth...",
+          );
+        });
     await widget.configService.shutDownBle().then((_) {
       Navigator.of(context).pop();
     });
