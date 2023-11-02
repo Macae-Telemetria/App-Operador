@@ -145,9 +145,9 @@ class BluetoothController {
       });
 
       int mtu = await device!.mtu.first;
-      await device!.requestMtu(247);
+      await device!.requestMtu(280);
 
-      while (mtu != 247) {
+      while (mtu != 280) {
         print("BluetoothController: Waiting for requested MTU $mtu");
         await Future.delayed(const Duration(seconds: 1));
         mtu = await device!.mtu.first;
