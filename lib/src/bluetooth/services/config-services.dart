@@ -106,18 +106,67 @@ class ConfigService {
 
     BluetoothCharacteristic? characteristic = findCharacteristic();
     if (characteristic == null) {
-      print("HealthCheckService: Unable to find config characteristic");
+      print("ConfigService: Unable to find config characteristic");
       return null;
     }
 
     try {
       // devo converter sirng to int
       print("ConfigService: Writing data");
-
       List<int> value = configData.toBuffer();
       await characteristic.write(value);
     } catch (err) {
       print("ConfigService: Failed to write data");
+      print("ConfigService: Error -> ${err}");
+    }
+
+    return null;
+  }
+
+  Future<ConfigData?> shutDownBle() async {
+    print("ConfigService: request bluettoth shutdown.");
+
+    BluetoothCharacteristic? characteristic = findCharacteristic();
+    if (characteristic == null) {
+      print("ConfigService: Unable to find characteristic");
+      return null;
+    }
+
+    try {
+      String input = "@@BLE_SHUTDOWN";
+      List<int> charCodes = [];
+      for (int i = 0; i < input.length; i++) {
+        int charCode = input.codeUnitAt(i);
+        charCodes.add(charCode);
+      }
+      await characteristic.write(charCodes);
+    } catch (err) {
+      print("ConfigService: Failed to request buetooth shutdown");
+      print("ConfigService: Error -> ${err}");
+    }
+
+    return null;
+  }
+
+  Future<ConfigData?> restartBoard() async {
+    print("ConfigService: request restart board.");
+
+    BluetoothCharacteristic? characteristic = findCharacteristic();
+    if (characteristic == null) {
+      print("ConfigService: Unable to find characteristic");
+      return null;
+    }
+
+    try {
+      String input = "@@RESTART";
+      List<int> charCodes = [];
+      for (int i = 0; i < input.length; i++) {
+        int charCode = input.codeUnitAt(i);
+        charCodes.add(charCode);
+      }
+      await characteristic.write(charCodes);
+    } catch (err) {
+      print("ConfigService: Failed to request board restart");
       print("ConfigService: Error -> ${err}");
     }
 

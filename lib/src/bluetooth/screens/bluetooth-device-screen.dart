@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:flutter_sit_operation_application/src/bluetooth/screens/configuration-screen.dart';
-import 'package:flutter_sit_operation_application/src/bluetooth/screens/metrics-screen/index.dart';
+import 'package:flutter_sit_operation_application/src/bluetooth/screens/device-configuration-screen.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/screens/reports-screen/index.dart';
 import 'package:flutter_sit_operation_application/src/widgets/loading-dialog.dart';
 
@@ -77,8 +76,8 @@ class _DeviceScreenState extends State<DeviceScreen> {
                           (_currentIndex == 0)
                               ? ReportsScreen(device: widget.device)
                               : const Text('Não carregado.'),
-                          (_currentIndex == 2)
-                              ? ConfigurationScreen(device: widget.device)
+                          (_currentIndex == 1)
+                              ? DeviceConfigurationScreen(device: widget.device)
                               : const Text('Não carregado.'),
                         ],
                       )
