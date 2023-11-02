@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_sit_operation_application/src/domain/config-file.dart';
+import 'package:flutter_sit_operation_application/src/shared/styles.dart';
 import 'package:flutter_sit_operation_application/src/widgets/app-text-filed.dart';
+import 'package:flutter_sit_operation_application/src/widgets/loading-dialog.dart';
 
 class ConfigView extends StatefulWidget {
   final ConfigData config;
@@ -17,7 +19,6 @@ class ConfigView extends StatefulWidget {
 }
 
 class _ConfigViewState extends State<ConfigView> {
-  bool _isLoading = false;
   var idCtrl = TextEditingController();
   var nameCtrl = TextEditingController();
   var wifiCtrl = TextEditingController();
@@ -56,10 +57,6 @@ class _ConfigViewState extends State<ConfigView> {
   }
 
   void _handleSubmit() async {
-    setState(() {
-      _isLoading = true;
-    });
-
     print("******* TRYING TO SUBMIT NEW CONFIG");
 
     final idText = idCtrl.text;
@@ -85,80 +82,108 @@ class _ConfigViewState extends State<ConfigView> {
         mqqtPortText,
         intervalText);
 
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) {
+          return const LoadingDialog(
+            title: "Salvando",
+            subtitle: "A estação será reiniciada em seguida.",
+          );
+        });
+
     var succeded = await widget.onSubmit(newConfig);
+
+    Navigator.of(context).pop();
     print('ConfigView: resultado aqui ${succeded}');
-
-    setState(() {
-      _isLoading = false;
-    });
-  }
-
-  void _handleChange(String v) {
-    /* if (_isEdited == false) {
-      print('Começou a editar agora! Notificar que valor foi trocado');
-      setState(() {
-        _isEdited = true;
-      });
-      widget.onChange(v);
-    } */
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          AppTextField(
-              label: "Id da estação", controller: idCtrl, initialValue: ""),
-          const SizedBox(height: 8),
-          AppTextField(
-              label: "Nome da estação", controller: nameCtrl, initialValue: ""),
-          const SizedBox(height: 8),
-          AppTextField(label: "Wifi", controller: wifiCtrl, initialValue: ""),
-          const SizedBox(height: 8),
-          AppTextField(
-              label: "Senha wifi", controller: wifiPassCtrl, initialValue: ""),
-          const SizedBox(height: 8),
-          AppTextField(
-              label: "Mqqt host", controller: mqqtServerCtrl, initialValue: ""),
-          const SizedBox(height: 8),
-          AppTextField(
-              label: "Mqqt port", controller: mqqtPortCtrl, initialValue: ""),
-          const SizedBox(height: 8),
-          AppTextField(
-              label: "Mqqt username",
-              controller: mqqtUsernameCtrl,
-              initialValue: ""),
-          const SizedBox(height: 8),
-          AppTextField(
-              label: "Mqqt Senha",
-              controller: mqqtPasswordCtrl,
-              initialValue: ""),
-          const SizedBox(height: 8),
-          AppTextField(
-              label: "Mqqt topico",
-              controller: mqqtTopicCtrl,
-              initialValue: ""),
-          const SizedBox(height: 8),
-          AppTextField(
-              label: "Intervalo de medições",
-              controller: intervalCtrl,
-              initialValue: ""),
-          const SizedBox(height: 8),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                padding: const EdgeInsets.symmetric(
-                    vertical: 15.0, horizontal: 32.0)),
-            onPressed: _handleSubmit,
-            child: const Text("Salvar"),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: secondaryColor, // Set the background color
+        title: const Text(
+          "Atualizar Configuração",
+          style: TextStyle(
+            fontSize: 20,
+            color: Colors.white,
           ),
-        ],
+        ),
+        actions: [],
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              AppTextField(
+                  label: "Id da estação", controller: idCtrl, initialValue: ""),
+              const SizedBox(height: 8),
+              AppTextField(
+                  label: "Nome da estação",
+                  controller: nameCtrl,
+                  initialValue: ""),
+              const SizedBox(height: 8),
+              AppTextField(
+                  label: "Wifi", controller: wifiCtrl, initialValue: ""),
+              const SizedBox(height: 8),
+              AppTextField(
+                  label: "Senha wifi",
+                  controller: wifiPassCtrl,
+                  initialValue: ""),
+              const SizedBox(height: 8),
+              AppTextField(
+                  label: "Mqqt host",
+                  controller: mqqtServerCtrl,
+                  initialValue: ""),
+              const SizedBox(height: 8),
+              AppTextField(
+                  label: "Mqqt port",
+                  controller: mqqtPortCtrl,
+                  initialValue: ""),
+              const SizedBox(height: 8),
+              AppTextField(
+                  label: "Mqqt username",
+                  controller: mqqtUsernameCtrl,
+                  initialValue: ""),
+              const SizedBox(height: 8),
+              AppTextField(
+                  label: "Mqqt Senha",
+                  controller: mqqtPasswordCtrl,
+                  initialValue: ""),
+              const SizedBox(height: 8),
+              AppTextField(
+                  label: "Mqqt topico",
+                  controller: mqqtTopicCtrl,
+                  initialValue: ""),
+              const SizedBox(height: 8),
+              AppTextField(
+                  label: "Intervalo de medições",
+                  controller: intervalCtrl,
+                  initialValue: ""),
+              const SizedBox(height: 8),
+              Container(
+                width: double.infinity,
+                height: 86,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: ElevatedButton(
+                  onPressed: _handleSubmit,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: secondaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(14.0), // Button border radius
+                    ),
+                  ),
+                  child: const Text("Salvar"),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

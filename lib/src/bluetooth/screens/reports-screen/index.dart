@@ -52,19 +52,25 @@ class _ReportsScreenState extends State<ReportsScreen> {
                       valueListenable: widget.healthCheckService.dataNotifier,
                       builder: (context, value, child) {
                         if (value == null) {
-                          return const CircularProgressIndicator();
+                          return const Column(
+                            children: [
+                              CircularProgressIndicator(),
+                              SizedBox(height: 32),
+                              Text("Carregando ..."),
+                            ],
+                          );
                         }
                         return HealthChecklView(value);
                       }),
                   const Divider(
                     // Este é o Divider
-                    color: Colors.grey, // Cor da linha
+                    color: Colors.blueGrey, // Cor da linha
                     height: 50, // Altura da linha
-                    thickness: 2, // Espessura da linha
-                    indent: 20, // Recuo à esquerda
-                    endIndent: 20, // Recuo à direita
+                    thickness: 1, // Espessura da linha
+                    indent: 24, // Recuo à esquerda
+                    endIndent: 24, // Recuo à direita
                   ),
-                  SizedBox(height: 32),
+                  SizedBox(height: 24),
                   ValueListenableBuilder<Metrics?>(
                       valueListenable:
                           widget.healthCheckService.metricsNotifier,
@@ -72,9 +78,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
                         if (value == null) {
                           return const Column(
                             children: [
-                              Text("Aguarando proxima medição"),
-                              SizedBox(height: 32),
                               CircularProgressIndicator(),
+                              SizedBox(height: 32),
+                              Text("Aguardando proxima medição"),
                             ],
                           );
                         }
