@@ -20,7 +20,7 @@ class BluetoothController {
 
           scanResults.value = [];
           await FlutterBluePlus.startScan(
-              timeout: Duration(seconds: 4), androidUsesFineLocation: true);
+              timeout: Duration(seconds: 5), androidUsesFineLocation: true);
         }
       }
     } catch (error) {

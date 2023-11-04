@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/utils.dart';
 
 class DeviceTile extends StatelessWidget {
   final String name;
@@ -15,14 +16,20 @@ class DeviceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(name,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-      subtitle: Text(subtitle),
-      onTap: onTap,
-      leading: Icon(!isconnected
-          ? Icons.bluetooth_disabled_outlined
-          : Icons.bluetooth_connected),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: ListTile(
+        title: Text(name,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        subtitle: Text(name,
+            style:
+                const TextStyle(fontWeight: FontWeight.normal, fontSize: 14)),
+        onTap: onTap,
+        leading: Container(
+            child: Icon(!isconnected
+                ? Icons.bluetooth_disabled_outlined
+                : Icons.bluetooth_connected)),
+      ),
     );
   }
 }

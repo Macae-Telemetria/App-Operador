@@ -5,6 +5,7 @@ import 'package:flutter_sit_operation_application/src/bluetooth/controller/sound
 import 'package:flutter_sit_operation_application/src/bluetooth/screens/scan-result.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/screens/bluetooth-device-screen.dart';
 import 'package:flutter_sit_operation_application/src/shared/styles.dart';
+import 'package:flutter_sit_operation_application/src/widgets/device-tile.dart';
 import 'package:flutter_sit_operation_application/src/widgets/floating-search-button.dart';
 
 class BluetoothOnScreen extends StatefulWidget {
@@ -28,14 +29,14 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
         shape: BoxShape.circle,
         image: DecorationImage(
           image: AssetImage(
-            "assets/images/bluetooth-search.gif",
+            "assets/images/bluetooth-sync.gif",
           ),
           fit: BoxFit.cover,
           alignment: Alignment.center,
         ),
       ),
       child: Container(
-        padding: const EdgeInsets.all(96),
+        padding: const EdgeInsets.all(80),
         decoration: const BoxDecoration(
           shape: BoxShape.circle,
         ),
@@ -47,7 +48,7 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
     if (!_isModalOpen) {
       _isModalOpen = true;
 
-      soundController.play();
+      soundController.play('assets/sounds/success.mp3');
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialog(
@@ -61,7 +62,6 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
                 _isModalOpen = false; // Update flag when modal is closed
               },
               onSubmit: (device) async {
-                // onSubmit
                 try {
                   await widget.controller.connectDevice(context, device);
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -84,6 +84,38 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
     }
   }
 
+  List<Widget> _renderScanResult(context, List<ScanResult> scanResult) {
+    if (scanResult.isEmpty) return [];
+
+    print("3D: ${scanResult}");
+
+    onPress(BluetoothDevice device) async {
+      try {
+        await widget.controller.connectDevice(context, device);
+
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Conectado com sucesso!"),
+        ));
+
+        widget.controller.scanResults.value = [];
+      } catch (error) {
+        print('Não foi possivel');
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Não foi possivel estabelecer Conexão."),
+        ));
+      }
+    }
+
+    var devices = (scanResult).map((s) => s.device);
+    return devices
+        .map((device) => DeviceTile(
+            name: device.platformName,
+            subtitle: device.remoteId.toString(),
+            isconnected: false,
+            onTap: () => onPress(device)))
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,26 +128,10 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
             color: Colors.white,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.info,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              /* showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) {
-                  // return InfoModal();
-                },
-              ); */
-            },
-          ),
-        ],
       ),
       backgroundColor: Colors.white, // Set the background color
       body: Container(
-        decoration: const BoxDecoration(
+        /* decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
               Colors.white,
@@ -127,7 +143,7 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
             end: Alignment
                 .bottomRight, // Define the ending point of the gradient
           ),
-        ),
+        ), */
         child: ValueListenableBuilder<BluetoothDevice?>(
             valueListenable: widget.controller.connectedDevice,
             builder: (context, device, child) {
@@ -135,36 +151,49 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
                 return ValueListenableBuilder<List<ScanResult>>(
                     valueListenable: widget.controller.scanResults,
                     builder: (context, result, child) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          StreamBuilder<bool>(
-                              stream: FlutterBluePlus.isScanning,
-                              initialData: false,
-                              builder: (c, snapshot) {
-                                bool isScanning = snapshot.data ?? false;
+                      return StreamBuilder<bool>(
+                          stream: FlutterBluePlus.isScanning,
+                          initialData: false,
+                          builder: (c, snapshot) {
+                            bool isScanning = snapshot.data ?? false;
 
-                                if (!isScanning && result.isNotEmpty) {
-                                  _showModal(context, result);
-                                }
+                            if (!isScanning && result.isNotEmpty) {
+                              soundController.play('success.mp3');
+                              return Column(children: [
+                                ..._renderScanResult(context, result),
+                                const SizedBox(height: 16),
+                                TextButton(
+                                  onPressed: () {
+                                    widget.controller.scanResults.value = [];
+                                  },
+                                  child: Text(
+                                    'Voltar',
+                                    style: TextStyle(
+                                        fontSize: 18, color: Colors.black45),
+                                  ),
+                                ),
+                              ]);
+                            }
 
-                                return Column(
-                                  children: [
-                                    Align(
-                                        alignment: Alignment.bottomCenter,
-                                        child: /*  isScanning
-                                            ? renderSearchLoading()
-                                            : */
-                                            FloatingSearchButton(
-                                                isRunning: snapshot.data!,
-                                                onStart: widget.controller.scan,
-                                                onStop: widget
-                                                    .controller.stopScan)),
-                                  ],
-                                );
-                              }),
-                        ],
-                      );
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: isScanning
+                                        ? renderSearchLoading()
+                                        : FloatingSearchButton(
+                                            isRunning: snapshot.data!,
+                                            onStart: () {
+                                              soundController
+                                                  .play('loading.mp3');
+                                              widget.controller.scan();
+                                            },
+                                            onStop:
+                                                widget.controller.stopScan)),
+                              ],
+                            );
+                          });
                     });
               }
               return FutureBuilder<bool>(

@@ -15,9 +15,12 @@ class LoadingDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            const SizedBox(
+              height: 28,
+            ),
             Container(
-              width: 56.0,
-              height: 56.0,
+              width: 52.0,
+              height: 52.0,
               child: CircularProgressIndicator(
                 value: null,
                 strokeWidth: 5.0,

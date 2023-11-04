@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
                     // return BTHomeScreen(controller: bluetoothController);
                     return AnimatedSplashScreen(
                       splash: 'assets/images/logo.png',
-                      splashIconSize: double.infinity - 108,
+                      splashIconSize: double.infinity,
                       nextScreen: BTHomeScreen(controller: bluetoothController),
                       splashTransition: SplashTransition.fadeTransition,
                     );
