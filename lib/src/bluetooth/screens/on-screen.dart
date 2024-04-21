@@ -31,7 +31,7 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
           image: AssetImage(
             "assets/images/bluetooth-sync.gif",
           ),
-          fit: BoxFit.cover,
+          fit: BoxFit.contain,
           alignment: Alignment.center,
         ),
       ),
@@ -48,7 +48,7 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
     if (!_isModalOpen) {
       _isModalOpen = true;
 
-      soundController.play('assets/sounds/success.mp3');
+      // soundController.play('assets/sounds/success.mp3');
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialog(
@@ -120,30 +120,17 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: secondaryColor, // Set the background color
+        backgroundColor: primaryColor, // Set the background color
         title: const Text(
-          "Sit Operador",
+          "GPICM Operador Embarcado",
           style: TextStyle(
             fontSize: 20,
             color: Colors.white,
           ),
         ),
       ),
-      backgroundColor: Colors.white, // Set the background color
+      backgroundColor: Colors.white,
       body: Container(
-        /* decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.white,
-              Color.fromARGB(255, 200, 207, 216),
-              Colors.white
-            ], // Define the gradient colors
-            begin:
-                Alignment.topLeft, // Define the starting point of the gradient
-            end: Alignment
-                .bottomRight, // Define the ending point of the gradient
-          ),
-        ), */
         child: ValueListenableBuilder<BluetoothDevice?>(
             valueListenable: widget.controller.connectedDevice,
             builder: (context, device, child) {
@@ -166,11 +153,9 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
                                   onPressed: () {
                                     widget.controller.scanResults.value = [];
                                   },
-                                  child: Text(
-                                    'Voltar',
-                                    style: TextStyle(
-                                        fontSize: 18, color: Colors.black45),
-                                  ),
+                                  child: Text('Voltar',
+                                      style: TextStyle(
+                                          fontSize: 18, color: Colors.black45)),
                                 ),
                               ]);
                             }

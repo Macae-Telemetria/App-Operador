@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/controller/bluetooth-controller.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/screens/home-screen.dart';
 import 'package:flutter_sit_operation_application/src/shared/home/home-screen.dart';
+import 'package:flutter_sit_operation_application/src/shared/styles.dart';
 
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
@@ -77,7 +78,8 @@ class MyApp extends StatelessWidget {
                   default:
                     // return BTHomeScreen(controller: bluetoothController);
                     return AnimatedSplashScreen(
-                      splash: 'assets/images/logo.png',
+                      splash: 'assets/images/splash.gif',
+                      backgroundColor: splashScreenColor,
                       splashIconSize: double.infinity,
                       nextScreen: BTHomeScreen(controller: bluetoothController),
                       splashTransition: SplashTransition.fadeTransition,
