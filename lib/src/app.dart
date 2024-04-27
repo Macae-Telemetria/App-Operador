@@ -4,7 +4,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/controller/bluetooth-controller.dart';
 import 'package:flutter_sit_operation_application/src/bluetooth/screens/home-screen.dart';
-import 'package:flutter_sit_operation_application/src/shared/home/home-screen.dart';
+import 'package:flutter_sit_operation_application/src/login/login_controller.dart';
+import 'package:flutter_sit_operation_application/src/login/login_view.dart';
 import 'package:flutter_sit_operation_application/src/shared/styles.dart';
 
 import 'settings/settings_controller.dart';
@@ -14,10 +15,12 @@ import 'settings/settings_view.dart';
 class MyApp extends StatelessWidget {
   const MyApp({
     super.key,
+    required this.loginController,
     required this.settingsController,
     required this.bluetoothController,
   });
 
+  final LoginController loginController;
   final SettingsController settingsController;
   final BluetoothController bluetoothController;
 
@@ -75,13 +78,14 @@ class MyApp extends StatelessWidget {
                   case SettingsView.routeName:
                     return SettingsView(controller: settingsController);
                   case BTHomeScreen.routeName:
+                    return BTHomeScreen(controller: bluetoothController);
+                  case LoginView.routeName:
                   default:
-                    // return BTHomeScreen(controller: bluetoothController);
-                    return AnimatedSplashScreen(
+                   return AnimatedSplashScreen(
                       splash: 'assets/images/splash.gif',
                       backgroundColor: splashScreenColor,
                       splashIconSize: double.infinity,
-                      nextScreen: BTHomeScreen(controller: bluetoothController),
+                      nextScreen: LoginView(controller: loginController),
                       splashTransition: SplashTransition.fadeTransition,
                     );
                 }
