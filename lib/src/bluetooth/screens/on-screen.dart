@@ -122,7 +122,7 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
       appBar: AppBar(
         backgroundColor: primaryColor, // Set the background color
         title: const Text(
-          "GPICM Operador Embarcado",
+          "GPICM Operador",
           style: TextStyle(
             fontSize: 20,
             color: Colors.white,
@@ -170,8 +170,6 @@ class _BluetoothOnScreenState extends State<BluetoothOnScreen> {
                                         : FloatingSearchButton(
                                             isRunning: snapshot.data!,
                                             onStart: () {
-                                              soundController
-                                                  .play('loading.mp3');
                                               widget.controller.scan();
                                             },
                                             onStop:

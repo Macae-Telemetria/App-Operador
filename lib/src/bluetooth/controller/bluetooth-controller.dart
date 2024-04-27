@@ -115,7 +115,7 @@ class BluetoothController {
           context: context,
           builder: (_) {
             return const LoadingDialog(
-              title: "Conectado...",
+              title: "Conectando...",
             );
           });
 

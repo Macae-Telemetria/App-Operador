@@ -59,8 +59,7 @@ class ConfigService {
       return null;
     }
 
-    print(
-        "ConfigService: inicido ${characteristic.remoteId} | ${characteristic.uuid}");
+    print("ConfigService: inicido ${characteristic.remoteId} | ${characteristic.uuid}");
     print("ConfigService: last value ${characteristic.lastValue}");
     print("ConfigService: Parando service...");
 
@@ -79,16 +78,23 @@ class ConfigService {
         configMap = json.decode(configJson);
       }
 
+      print("ConfigService: Lendo configuraçẽos aqui");
+
+      String mqttConnectionString = configMap['MQTT_HOST_V1'];
+      String mqttV2ConnectionString = configMap['MQTT_HOST_V2'];
+      final mqqtConfig = new MqqtConfig.fromString(mqttConnectionString);
+      final mqqtV2Config = new MqqtConfig.fromString(mqttV2ConnectionString);
+    
+      String defaultTopic = configMap['MQTT_TOPIC'] ?? "";
+      mqqtConfig.setTopic((defaultTopic));
+
       final config = ConfigData(
-        configMap['STATION_UID'] ?? "",
-        configMap['STATION_NAME'] ?? "",
+        configMap['UID'] ?? "",
+        configMap['SLUG'] ?? "",
         configMap['WIFI_SSID'] ?? "",
         configMap['WIFI_PASSWORD'] ?? "",
-        configMap['MQTT_SERVER'] ?? "",
-        configMap['MQTT_USERNAME'] ?? "",
-        configMap['MQTT_PASSWORD'] ?? "",
-        configMap['MQTT_TOPIC'] ?? "",
-        configMap['MQTT_PORT'].toString(),
+        mqqtConfig,
+        mqqtV2Config,
         configMap['INTERVAL'].toString(),
       );
       print("ConfigService: ${config}");

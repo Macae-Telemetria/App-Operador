@@ -21,9 +21,9 @@ class AppTextField extends StatelessWidget {
           label,
           textAlign: TextAlign.left,
           style: const TextStyle(
-            fontSize: 14,
+            fontSize: 12,
             color: Colors.blueGrey,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w400,
           ),
         ),
         const SizedBox(height: 5),

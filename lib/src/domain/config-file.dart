@@ -1,45 +1,77 @@
 import 'dart:convert';
 
+class MqqtConfig {
+  String server;
+  String port;
+  String username;
+  String password;
+  String topic;
+  MqqtConfig(
+    this.server,
+    this.username,
+    this.password,
+    this.port,
+    this.topic,
+  );
+
+  factory MqqtConfig.fromString(String mqttConnectionString) {
+    RegExp regex = RegExp(r'mqtt://([^:]+):([^@]+)@([^:]+):(\d+)');
+    Match match = regex.firstMatch(mqttConnectionString) as Match;
+    String username ="";
+    String password= "";
+    String server= "";
+    String port = "";
+    if (match != null) {
+      username = match.group(1) ?? "";
+      password = match.group(2) ?? "";
+      server = match.group(3) ?? "";
+      port = match.group(4) ?? "";
+    }
+    return MqqtConfig(server, username, password, port, "");
+  }
+
+  setTopic(String t){
+    this.topic = t;
+  }
+
+  @override
+  String toString() {
+    return "mqtt://$username:$password@$server:${int.parse(port)}";
+  }
+}
+
 class ConfigData {
   String uid;
-  String name;
+  String slug;
   String wifiSsid;
   String wifiPassword;
-  String mqqtServer;
-  String mqqtUsername;
-  String mqqtPassword;
-  String mqqtTopic;
-  String mqqtPort;
+  MqqtConfig mqqtConfig;
+  MqqtConfig mqqtV2Config;
   String readInterval;
 
   ConfigData(
       this.uid,
-      this.name,
+      this.slug,
       this.wifiSsid,
       this.wifiPassword,
-      this.mqqtServer,
-      this.mqqtUsername,
-      this.mqqtPassword,
-      this.mqqtTopic,
-      this.mqqtPort,
+      this.mqqtConfig,
+      this.mqqtV2Config,
       this.readInterval);
 
   @override
   String toString() {
-    return "id: $uid, name: $name";
+    return "id: $uid, slug: $slug";
   }
 
   String toJson() {
     Map data = {
-      'STATION_UID': uid,
-      'STATION_NAME': name,
+      'UID': uid,
+      'SLUG': slug,
       'WIFI_SSID': wifiSsid,
       'WIFI_PASSWORD': wifiPassword,
-      'MQTT_SERVER': mqqtServer,
-      'MQTT_USERNAME': mqqtUsername,
-      'MQTT_PASSWORD': mqqtPassword,
-      'MQTT_TOPIC': mqqtTopic,
-      'MQTT_PORT': mqqtPort.isNotEmpty ? int.parse(mqqtPort) : 1883,
+      'MQTT_HOST_V1': mqqtConfig.toString(),
+      'MQTT_HOST_v2': mqqtV2Config.toString(),
+      'MQTT_TOPIC': mqqtConfig.topic,
       'INTERVAL': readInterval.isNotEmpty ? int.parse(readInterval) : 60000,
     };
 

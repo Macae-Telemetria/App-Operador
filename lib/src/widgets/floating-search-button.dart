@@ -16,14 +16,17 @@ class FloatingSearchButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: 142,
-        height: 142,
-        child: FloatingActionButton.large(
-          onPressed: () => isRunning ? onStop() : onStart(),
-          backgroundColor: isRunning ? Colors.red : primaryColor,
-          child: isRunning
-              ? const Icon(Icons.stop, color: Colors.white,)
-              : const Icon(Icons.search, color: Colors.white, size: 48),
+        width: 162,
+        height: 162,
+        child: ClipOval(
+          child: FloatingActionButton.large(
+            onPressed: () => isRunning ? onStop() : onStart(),
+            backgroundColor: isRunning ? Colors.red : primaryColor,
+            child: isRunning
+                ? const Icon(Icons.stop, color: Colors.white,)
+                : const Icon(Icons.search, color: Colors.white, size: 48),
+          ),
         ));
   }
 }
+

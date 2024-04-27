@@ -25,7 +25,6 @@ class _ConfigurationScreenState extends State<ConfigurationScreen> {
 
   @override
   void dispose() {
-    print("ReportsScreen: vamos fazer um dispose");
     widget.configService.dispose();
     super.dispose();
   }

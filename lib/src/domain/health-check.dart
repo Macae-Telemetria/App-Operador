@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 class HealthCheck {
   String softwareVersion;
@@ -31,17 +30,4 @@ class HealthCheck {
 
     return json.encode(data);
   }
-
-  /* String toJson() {
-    Map data = {
-      'softwareVersion': softwareVersion,
-      'timestamp': timestamp,
-      'isWifiConnected': isWifiConnected,
-      'isMqqtConnected': isMqqtConnected,
-      'wifiDbm': wifiDbm,
-      'timeRemaining': timeRemaining
-    };
-
-    return json.encode(data);
-  } */
 }
