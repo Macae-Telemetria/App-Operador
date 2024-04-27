@@ -67,10 +67,9 @@ class ConfigData {
     Map data = {
       'UID': uid,
       'SLUG': slug,
-      'WIFI_SSID': wifiSsid,
-      'WIFI_PASSWORD': wifiPassword,
-      'MQTT_HOST_V1': mqqtConfig.toString(),
-      'MQTT_HOST_v2': mqqtV2Config.toString(),
+      'WIFI': "${wifiSsid}:${wifiPassword}",
+      'MQTT_HOST': mqqtConfig.toString(),
+      'MQTT_HOST_V2': mqqtV2Config.toString(),
       'MQTT_TOPIC': mqqtConfig.topic,
       'INTERVAL': readInterval.isNotEmpty ? int.parse(readInterval) : 60000,
     };

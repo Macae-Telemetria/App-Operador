@@ -80,8 +80,14 @@ class ConfigService {
 
       print("ConfigService: Lendo configuraçẽos aqui");
 
-      String mqttConnectionString = configMap['MQTT_HOST_V1'];
+      String mqttConnectionString = configMap['MQTT_HOST'];
       String mqttV2ConnectionString = configMap['MQTT_HOST_V2'];
+      String wifiString = configMap['WIFI'];
+
+      List<String> wifiParts = wifiString.split(":");
+      String wifiSSID = wifiParts[0];
+      String password = wifiParts[1];
+    
       final mqqtConfig = new MqqtConfig.fromString(mqttConnectionString);
       final mqqtV2Config = new MqqtConfig.fromString(mqttV2ConnectionString);
     
@@ -91,8 +97,8 @@ class ConfigService {
       final config = ConfigData(
         configMap['UID'] ?? "",
         configMap['SLUG'] ?? "",
-        configMap['WIFI_SSID'] ?? "",
-        configMap['WIFI_PASSWORD'] ?? "",
+        wifiParts[0] ?? "",
+        wifiParts[1] ?? "",
         mqqtConfig,
         mqqtV2Config,
         configMap['INTERVAL'].toString(),
@@ -117,7 +123,6 @@ class ConfigService {
     }
 
     try {
-      // devo converter sirng to int
       print("ConfigService: Writing data");
       List<int> value = configData.toBuffer();
       await characteristic.write(value);

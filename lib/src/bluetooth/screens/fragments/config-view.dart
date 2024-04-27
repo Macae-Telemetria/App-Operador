@@ -112,14 +112,16 @@ class _ConfigViewState extends State<ConfigView> {
         intervalText);
 
     showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (_) {
-          return const LoadingDialog(
-            title: "Salvando",
-            subtitle: "A estação será reiniciada em seguida.",
-          );
-        });
+      barrierDismissible: false,
+      context: context,
+      builder: (_) {
+        return const LoadingDialog(
+          title: "Salvando",
+          subtitle: "A estação será reiniciada em seguida.",
+        );
+      });
+
+    print("NewConfig: ${newConfig.toJson()}");
 
     var succeded = await widget.onSubmit(newConfig);
 
