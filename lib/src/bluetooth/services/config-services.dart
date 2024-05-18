@@ -61,23 +61,39 @@ class ConfigService {
 
     print("ConfigService: inicido ${characteristic.remoteId} | ${characteristic.uuid}");
     print("ConfigService: last value ${characteristic.lastValue}");
-    print("ConfigService: Parando service...");
+    print("ConfigService: Pareando service...");
 
     try {
       List<int> value = await characteristic.read();
-
+      String valueStr = String.fromCharCodes(value);
+      print(valueStr);
       if (value.isEmpty) return null;
+      
+      else if(valueStr == "{}" )
+      {
+        print("ConfigService: empty value default configuration.");
+        var mqqtConfig = new MqqtConfig.fromString("mqtt://telemetria:kancvx8thz9FCN5jyq@broker.gpicm-ufrj.tec.br:1883");
+        var mqqtV2Config = new MqqtConfig.fromString("mqtt://admin:123@146.190.171.0:1884");
+        mqqtConfig.setTopic("/prefeituras/macae/estacoes/");
+        var config = ConfigData(
+          "",
+          "",
+          "",
+          "",
+          mqqtConfig,
+          mqqtV2Config,
+          "60000",
+        );
+        return config;
+      }
 
       print('ConfigService: Novo valor ${value}');
 
       Map<String, dynamic> configMap = {};
-
-      if (value.isNotEmpty) {
-        String configJson = String.fromCharCodes(value);
-        print(configJson);
-        configMap = json.decode(configJson);
-      }
-
+      String configJson = String.fromCharCodes(value);
+      print(configJson);
+      configMap = json.decode(configJson);
+      
       print("ConfigService: Lendo configuraçẽos aqui");
 
       String mqttConnectionString = configMap['MQTT_HOST'];
@@ -105,11 +121,11 @@ class ConfigService {
       );
       print("ConfigService: ${config}");
       return config;
+  
     } catch (err) {
       print("ConfigService: Error");
       print("ConfigService: ${err}");
     }
-
     return null;
   }
 
