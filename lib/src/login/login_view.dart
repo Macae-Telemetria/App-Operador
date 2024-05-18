@@ -75,7 +75,9 @@ class LoginView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Image(image: AssetImage("assets/images/logo.png")),
+            const Image(image: AssetImage("assets/images/logo.png"), width: 240,),
+            const SizedBox(height: 32.0),
+
             TextField(
               controller: _emailController,
               decoration: InputDecoration(
@@ -90,6 +92,7 @@ class LoginView extends StatelessWidget {
             const SizedBox(height: 32.0),
             TextField(
               controller: _senhaController,
+              obscureText: true, // This hides the text entered by the user
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white,
