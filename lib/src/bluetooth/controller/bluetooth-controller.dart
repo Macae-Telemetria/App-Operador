@@ -15,10 +15,13 @@ class BluetoothController {
     print('BluetoothController: Tentando escaner ...');
     try {
       if (await Permission.bluetoothScan.request().isGranted) {
+        print('BluetoothController: scan permission Granted ...');
+
         if (await Permission.bluetoothConnect.request().isGranted) {
-          print('BluetoothController: tempos permissção ...');
+          print('BluetoothController: connect permission Granted ...');
 
           scanResults.value = [];
+      
           await FlutterBluePlus.startScan(
               timeout: Duration(seconds: 5), androidUsesFineLocation: true);
         }
@@ -26,6 +29,7 @@ class BluetoothController {
     } catch (error) {
       print('BluetoothController: Captured execption: ${error}');
     }
+    print("Scanned");
   }
 
   stopScan() async {
